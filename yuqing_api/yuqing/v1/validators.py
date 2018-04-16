@@ -34,7 +34,7 @@ class ValidatorAdaptor(object):
         if obj is None or not obj:
             return None
         if six.PY3:
-            if isinstance(obj, str):
+            if isinstance(obj, (str, bytes)):
                 obj = MultiDict(json.loads(obj))
         else:
             if isinstance(obj, (str, unicode, basestring)):
@@ -150,7 +150,8 @@ def response_filter(obj):
                         reason=json.dumps(errors))
             obj.set_status(status)
             obj.set_headers(headers)
-            obj.write(json.dumps(resp))
+            if resp:
+                obj.write(json.dumps(resp))
             return
         return wrapper
     return _response_filter
