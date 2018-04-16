@@ -1,0 +1,90 @@
+swagger: "2.0"
+info:
+  title: 盛元舆情监控微信小程序API
+  description: 盛元舆情监控微信小程序API
+  version: 1.0.0
+  
+host: api.qianjifang.com.cn
+basePath: /v1
+schemes:
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /wechat/login:
+    post:
+      tags: 
+        - wechat
+      summary: 微信登录授权
+      parameters:
+        - in: body
+          name: wechatcode
+          description: 微信授权.
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                summary: 微信临时登录凭证
+                description: 调用接口wx.login() 获取临时登录凭证（code）
+              random:
+                type: string
+                summary: 随机码
+                description: 小程序客户端随机生成6位数字
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              session:
+                type: string
+                summary: 登录凭证
+                description: 小程序登录凭证,对应表session.id
+              is_binding:
+                type: boolean
+                summary: 是否绑定员工
+                description: openid在表employee找不到返回False,否则为True
+              expire_time:
+                type: datetime
+                summary: 过期时间
+                description: 对应表session.expire_time
+  
+  /account/login:
+    post:
+      tags:
+        - account
+      summary: 员工登录
+      security:
+        - APISessionHeader: []
+      parameters:
+        - in: body
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+      responses:
+        204:
+          description: 登录成功
+        400:
+          description: 登录失败
+
+
+  
+
+
+securityDefinitions:
+  APISessionHeader:
+    type: apiKey
+    in: header
+    name: X-Session
+
+
+
