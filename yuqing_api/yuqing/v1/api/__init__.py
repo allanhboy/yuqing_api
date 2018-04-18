@@ -10,6 +10,6 @@ class ApiHandler(RequestHandler):
 
     def get_current_user(self):
         authorization = self.request.headers.get('Authorization', '')
-        user_id = self.request.headers.get('user_id')
+        session_id = self.request.headers.get('X-Session')
 
-        return UserInfo(user_id, authorization, self.blueprint)
+        return UserInfo(session_id, authorization, self.blueprint)

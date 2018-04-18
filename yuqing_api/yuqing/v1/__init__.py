@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+from core import PackageDB,PackageSession
+from core.PackageDB import session, employee 
+
 class UserInfo(object):
     _scopes = None
     client_id = None
-    _account = None
+    _session = None
+    _employee = None
 
-    def __init__(self, user_id, authorization, blueprint):
+    def __init__(self, session_id, authorization, blueprint):
         self.authorization = authorization
-        self.user_id = user_id
+        self.session_id = session_id
         self.blueprint = blueprint
-        self.valid = False
+        with PackageDB._connectDBdata_() as dbsession:
+            self.valid = dbsession.query(session).filter(session.id == session_id).count() > 0
 
     @property
     def scopes(self):
@@ -22,9 +27,22 @@ class UserInfo(object):
         return []
 
     @property
-    def account(self):
-        if self._account is None:
-            if self.valid and self.user_id:
+    def session(self):
+        if self._session is None:
+            if self.valid and self.session_id:
                 # TODO: test
-                self._account = None
-        return self._account
+                with PackageDB._connectDBdata_() as dbsession:
+                    self._session = dbsession.query(session).filter(session.id == self.session_id).one()
+                
+        return self._session
+
+    @property
+    def employee(self):
+        if self._employee is None:
+            if self.valid:
+                sess =  self.session
+                if sess:
+                     with PackageDB._connectDBdata_() as dbsession:
+                         self._employee = dbsession.query(employee).filter(employee.id == sess.employee_id).one_or_none()
+
+        return self._employee
