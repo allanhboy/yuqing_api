@@ -15,26 +15,22 @@ class Search(ApiHandler):
         i=0
         infoarray =[]
         if follow_type == 1:
-            dbinfo = dbsession.query(company.id,company.company_name,company.short_name).filter(company.company_name.like('%'+key+'%' )).all()
-            while i< (len(dbinfo)):
+            for row in dbsession.query(company.id,company.company_name,company.short_name).filter(company.company_name.like('%'+key+'%' )).all():
                 infodic ={}
-                infodic['id']=dbinfo[i][0]
-                infodic['company_name'] = dbinfo[i][1]
-                infodic['short_name)'] = dbinfo[i][2]
+                infodic['id']=row[0]
+                infodic['company_name'] = row[1]
+                infodic['short_name)'] = row[2]
                 infodic['follow_type']=1
                 infoarray.append(infodic)
-                i=i+1
             respone={'follows':infoarray}
             return respone, 200, None
         else:
-            dbinfo = dbsession.query(industry.id,industry.industry_name,industry.children_count).filter(industry.industry_name.like('%'+key+'%' )).all()
-            while i< (len(dbinfo)):
+            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).filter(industry.industry_name.like('%'+key+'%' )).all():
                 infodic ={}
-                infodic['id']=dbinfo[i][0]
-                infodic['industry_name'] = dbinfo[i][1]
-                infodic['children_count)'] = dbinfo[i][2]
+                infodic['id']=row[0]
+                infodic['industry_name'] =row[1]
+                infodic['children_count)'] = row[2]
                 infodic['follow_type']=2
                 infoarray.append(infodic)
-                i=i+1
             respone={'follows':infoarray}
             return respone, 200, None
