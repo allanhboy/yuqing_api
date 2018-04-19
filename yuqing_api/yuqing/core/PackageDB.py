@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 
 from sqlalchemy.ext.declarative import declarative_base  #描述表结构
-from sqlalchemy import Column, String, Integer,BigInteger,DATETIME,SmallInteger
+from sqlalchemy import Column, String, Integer,BigInteger,DATETIME,SmallInteger,Text
 
 from sqlalchemy.orm import sessionmaker,relationship  #与mysql建立会话
 from sqlalchemy import ForeignKey       #表建立关系
@@ -97,6 +97,19 @@ class  session(Base):
     expire_time = Column('expire_time',DATETIME, nullable=False)
     session_key = Column('session_key',String(256),nullable=False)
     random = Column('random',Integer,nullable=False)
+
+class article(Base):
+    __tablename__ = 'session'
+    id = Column('id',SmallInteger, primary_key=True,index=True)
+    title = Column('title',String(256),nullable=False)
+    thumb_img = Column('thumb_img',String(256))
+    url = Column('url',String(512),nullable=False)
+    description = Column('description',Text)
+    publish_time = Column('publish_time',String(256),nullable=False)
+    text = Column('text',Text,nullable=False)
+    create_time = Column('create_time',String(256),nullable=False)
+    source_site = Column('source_site',String(128),nullable=False)
+    body = Column('body',Text,nullable=False)
 
 def _connectDBdata_():
     Base.metadata.create_all(engine) ###数据库连接
