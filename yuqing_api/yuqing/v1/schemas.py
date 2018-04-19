@@ -22,7 +22,7 @@ validators = {
     ('account_login', 'POST'): {'json': {'type': 'object', 'properties': {'password': {'type': 'string'}, 'username': {'type': 'string'}}}},
     ('follow', 'POST'): {'json': {'type': 'object', 'properties': {'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'id': {'type': 'integer'}}}},
     ('follow', 'DELETE'): {'json': {'type': 'object', 'properties': {'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'id': {'type': 'integer'}}}},
-    ('search', 'GET'): {'args': {'required': [], 'properties': {'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'key': {'type': 'integer'}}}},
+    ('search', 'GET'): {'args': {'required': [], 'properties': {'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'key': {'type': 'string'}}}},
 }
 
 filters = {

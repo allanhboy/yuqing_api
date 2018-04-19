@@ -8,9 +8,9 @@ from core import PackageDB,PackageSession
 
 class Home(ApiHandler):
 
-    def get(self):
-        session = PackageSession.Session(self,1)    
-        username=session['username']
-        print(username)               
-
-        return {}, 200, None
+    def get(self):             
+        user = self.get_current_user()
+        if user.valid:
+            user.employee
+        
+            return {}, 200, None

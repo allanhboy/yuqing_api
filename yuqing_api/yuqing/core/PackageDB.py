@@ -6,7 +6,7 @@ from sqlalchemy import Column, String, Integer,BigInteger,DATETIME,SmallInteger
 from sqlalchemy.orm import sessionmaker,relationship  #与mysql建立会话
 from sqlalchemy import ForeignKey       #表建立关系
 
-engine = create_engine('mysql+mysqldb://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing')
+engine = create_engine('mysql+mysqldb://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing?charset=utf8')
 Base = declarative_base()
 
 class employee(Base):

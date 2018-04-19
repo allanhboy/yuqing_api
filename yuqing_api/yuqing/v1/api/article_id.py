@@ -8,5 +8,5 @@ from .. import schemas
 class ArticleId(ApiHandler):
 
     def get(self, id):
-
+        print(id)
         return {}, 200, None

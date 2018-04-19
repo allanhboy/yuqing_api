@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from core import PackageDB,PackageSession
+from core.PackageDB import _connectDBdata_
 from core.PackageDB import session, employee 
 
 class UserInfo(object):
@@ -14,8 +14,8 @@ class UserInfo(object):
         self.authorization = authorization
         self.session_id = session_id
         self.blueprint = blueprint
-        with PackageDB._connectDBdata_() as dbsession:
-            self.valid = dbsession.query(session).filter(session.id == session_id).count() > 0
+        dbsession = _connectDBdata_()
+        self.valid = dbsession.query(session).filter(session.id == session_id).count() > 0
 
     @property
     def scopes(self):
@@ -31,8 +31,8 @@ class UserInfo(object):
         if self._session is None:
             if self.valid and self.session_id:
                 # TODO: test
-                with PackageDB._connectDBdata_() as dbsession:
-                    self._session = dbsession.query(session).filter(session.id == self.session_id).one()
+                dbsession = _connectDBdata_()
+                self._session = dbsession.query(session).filter(session.id == self.session_id).one()
                 
         return self._session
 
@@ -42,7 +42,7 @@ class UserInfo(object):
             if self.valid:
                 sess =  self.session
                 if sess:
-                     with PackageDB._connectDBdata_() as dbsession:
-                         self._employee = dbsession.query(employee).filter(employee.id == sess.employee_id).one_or_none()
+                    dbsession = _connectDBdata_()
+                    self._employee = dbsession.query(employee).filter(employee.id == sess.employee_id).one_or_none()
 
         return self._employee
