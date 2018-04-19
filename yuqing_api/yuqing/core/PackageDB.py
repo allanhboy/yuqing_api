@@ -100,16 +100,26 @@ class  session(Base):
 
 class article(Base):
     __tablename__ = 'article'
-    id = Column('id',SmallInteger, primary_key=True,index=True)
+    id = Column('id',BigInteger, primary_key=True,index=True)
     title = Column('title',String(256),nullable=False)
     thumb_img = Column('thumb_img',String(256))
     url = Column('url',String(512),nullable=False)
     description = Column('description',Text)
-    publish_time = Column('publish_time',String(256),nullable=False)
+    publish_time = Column('publish_time',DATETIME,nullable=False)
     text = Column('text',Text,nullable=False)
-    create_time = Column('create_time',String(256),nullable=False)
+    create_time = Column('create_time',DATETIME,nullable=False)
     source_site = Column('source_site',String(128),nullable=False)
     body = Column('body',Text,nullable=False)
+
+class employee_article(Base):
+    __tablename__ = 'employee_article'
+    employee_id = Column('employee_id',Integer, primary_key=True,index=True)
+    article_id = Column('article_id',BigInteger, primary_key=True,index=True)
+    is_read = Column('is_read',SmallInteger,nullable=False)
+    is_invalid = Column('is_invalid',SmallInteger,nullable=False)
+    is_send = Column('is_send',SmallInteger,nullable=False)
+    send_time = Column('send_time',DATETIME)
+
 
 def _connectDBdata_():
     Base.metadata.create_all(engine) ###数据库连接
