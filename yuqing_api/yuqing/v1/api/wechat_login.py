@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function
 from . import ApiHandler
 from .. import schemas
 
-from core import PackageDB,PackageSession
+from core.PackageDB import session,employee,_connectDBdata_
 import urllib.request
 import json
 import uuid
@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 class WechatLogin(ApiHandler):
 
     def post(self):
-        dbsession = PackageDB._connectDBdata_()
+        dbsession = _connectDBdata_()
         code = self.json['code']
         random =  self.json['random']
         appid = 'wx1154d8019b1db191'
@@ -31,15 +31,15 @@ class WechatLogin(ApiHandler):
         respone = {}
         id = uuid.uuid1()
         expiretime=datetime.now()+timedelta(days=7)
-        sessioninfo = PackageDB.session(id=id,openid=openid,session_key=session_key,random=random,expire_time=expiretime)
+        sessioninfo = session(id=id,openid=openid,session_key=session_key,random=random,expire_time=expiretime)
         dbsession.add(sessioninfo)
         dbsession.commit()
         respone['session'] = sessioninfo.id
         respone['expire_time'] = sessioninfo.expire_time.strftime('%Y-%m-%d %H:%M:%S') 
 
-        dbemployeeid = dbsession.query(PackageDB.employee.id).filter_by(openid=openid).first()
+        dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).first()
         if dbemployeeid:
-            dbsessioninfo = dbsession.query(PackageDB.session).filter_by(openid=openid).order_by(PackageDB.session.create_time.desc()).first()
+            dbsessioninfo = dbsession.query(session).filter_by(openid=openid).order_by(session.create_time.desc()).first()
             dbsessioninfo.employee_id = dbemployeeid
             dbsession.add(dbsessioninfo)
             dbsession.commit()

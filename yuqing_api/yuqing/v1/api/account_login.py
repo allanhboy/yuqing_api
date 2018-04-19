@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function
 from . import ApiHandler
 from .. import schemas
 
-from core import PackageDB,PackageSession
+from core.PackageDB import employee,_connectDBdata_
 import hashlib  ##MD5加密
 
 class AccountLogin(ApiHandler):
@@ -12,11 +12,11 @@ class AccountLogin(ApiHandler):
     def post(self):
         user = self.get_current_user()
         if user.valid:
-            dbsession = PackageDB._connectDBdata_()
+            dbsession = _connectDBdata_()
             username = self.json['username']
             password = self.json['password']
             if username and password:
-                dbemployee=dbsession.query(PackageDB.employee).filter_by(username=username).first()
+                dbemployee=dbsession.query(employee).filter_by(username=username).first()
                 if dbemployee.password:
                     passwordmd5 = hashlib.md5()   
                     passwordmd5.update(password.encode(encoding='utf-8'))
