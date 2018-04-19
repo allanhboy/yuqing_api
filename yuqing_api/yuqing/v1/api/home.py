@@ -11,6 +11,7 @@ import json
 
 class Home(ApiHandler):
 
+
     def get(self):
         user = self.get_current_user()
         respone = {}
