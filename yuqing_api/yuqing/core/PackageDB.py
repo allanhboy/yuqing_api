@@ -51,7 +51,7 @@ class  follow_company(Base):
     employee_id = Column('employee_id',Integer,ForeignKey('employee.id'), nullable=False)
     company_id = Column('company_id',BigInteger,ForeignKey('company.id'), nullable=False)
     follow_time = Column('follow_time',DATETIME, nullable=False)
-    is_follow = Column('is_follow',SmallInteger, nullable=False)
+    is_follow = Column('is_follow',SmallInteger, nullable=False,default=1)
     unfollow_time = Column('unfollow_time',DATETIME)
 
 class  follow_industry(Base):
@@ -60,7 +60,7 @@ class  follow_industry(Base):
     employee_id = Column('employee_id',Integer,ForeignKey('employee.id'),nullable=False)
     industry_id = Column('industry_id',BigInteger,ForeignKey('industry.id'), nullable=False)
     follow_time = Column('follow_time',DATETIME, nullable=False)
-    is_follow = Column('is_follow',SmallInteger, nullable=False)
+    is_follow = Column('is_follow',SmallInteger, nullable=False,default=1)
     unfollow_time = Column('unfollow_time',DATETIME)
 
 class  industry(Base):
