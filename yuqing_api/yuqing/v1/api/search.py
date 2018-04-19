@@ -31,6 +31,13 @@ class Search(ApiHandler):
                 infodic['industry_name'] =row[1]
                 infodic['children_count)'] = row[2]
                 infodic['follow_type']=2
+                children = []
+                for  childrenrow in dbsession.query(industry.id,industry.industry_name).filter(industry.parent_id == row[0]).all():
+                    childrendic = {}
+                    childrendic['id'] = childrenrow[0]
+                    childrendic['industry_name'] = childrenrow[0]
+                    children.append(childrendic)
+                infodic['children'] = children
                 infoarray.append(infodic)
             respone={'follows':infoarray}
             return respone, 200, None
