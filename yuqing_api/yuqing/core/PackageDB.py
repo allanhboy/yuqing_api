@@ -99,7 +99,7 @@ class  session(Base):
     random = Column('random',Integer,nullable=False)
 
 class article(Base):
-    __tablename__ = 'session'
+    __tablename__ = 'article'
     id = Column('id',SmallInteger, primary_key=True,index=True)
     title = Column('title',String(256),nullable=False)
     thumb_img = Column('thumb_img',String(256))
