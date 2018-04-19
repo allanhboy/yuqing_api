@@ -37,7 +37,6 @@ class Newfollow(ApiHandler):
                 if dbfollowcompany:
                     print(dbfollowcompany.is_follow)
                     if dbfollowcompany.is_follow == 0:
-                        print('222')
                         dbfollowcompany.is_follow = 1
                         dbfollowcompany.follow_time = datetime.now()
                         dbsession.add(dbcompanyinfo)
