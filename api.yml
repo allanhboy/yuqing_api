@@ -1,23 +1,20 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
   title: 盛元舆情监控微信小程序API
   description: 盛元舆情监控微信小程序API
   version: 1.0.0
-  
 host: api.qianjifang.com.cn
 basePath: /v1
 schemes:
   - http
-
 consumes:
   - application/json
 produces:
   - application/json
-
 paths:
   /wechat/login:
     post:
-      tags: 
+      tags:
         - wechat
       summary: 微信登录授权
       parameters:
@@ -34,21 +31,24 @@ paths:
                 type: string
                 description: 小程序客户端随机生成6位数字
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
             properties:
               session:
                 type: string
-                description: 小程序登录凭证,对应表session.id
+                description: '小程序登录凭证,对应表session.id'
               is_binding:
                 type: boolean
-                description: openid在表employee找不到返回False,否则为True
+                description: 'openid在表employee找不到返回False,否则为True'
               expire_time:
                 type: string
                 description: 对应表session.expire_time
-  
+        '400':
+          description: 微信授权失败 
+          schema:
+            $ref: "#/definitions/Error"
   /account/login:
     post:
       tags:
@@ -67,11 +67,12 @@ paths:
               password:
                 type: string
       responses:
-        204:
+        '204':
           description: 登录成功
-        400:
-          description: 登录失败
-      
+        '400':
+          description: 登录失败 
+          schema:
+            $ref: "#/definitions/Error"
   /home:
     get:
       tags:
@@ -80,7 +81,7 @@ paths:
       produces:
         - application/json
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -116,7 +117,6 @@ paths:
                       type: string
                     is_read:
                       type: integer
-                    
   /articles:
     get:
       tags:
@@ -129,8 +129,11 @@ paths:
         - in: query
           name: follow_type
           type: integer
+        - in: query
+          name: key
+          type: string
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -155,10 +158,7 @@ paths:
                       type: string
                     is_read:
                       type: integer
-
-              
-  
-  /article/{id}:
+  '/article/{id}':
     get:
       tags:
         - articledetails
@@ -170,7 +170,7 @@ paths:
           required: true
           description: Numeric ID of the user to get.
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -189,8 +189,7 @@ paths:
                 type: string
               content:
                 type: string
-
-  /article/{id}/invalid:
+  '/article/{id}/invalid':
     put:
       tags:
         - Invalidinformation
@@ -202,13 +201,16 @@ paths:
           required: true
           description: Numeric ID of the user to get.
       responses:
-        204:
+        '204':
           description: OK
-          
-  /search:                    ##问题
+        '400':
+          description: 失败
+          schema:
+            $ref: "#/definitions/Error"
+  /search:
     get:
       tags:
-        - seekhint
+        - search
       summary: 搜索提示
       parameters:
         - in: query
@@ -217,25 +219,42 @@ paths:
         - in: query
           name: follow_type
           type: integer
-          enum: [1,2]
+          enum:
+            - 1
+            - 2
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
             properties:
               follows:
                 type: array
-                items: 
+                items:
                   type: object
                   properties:
                     id:
                       type: integer
+                    follow_type:
+                      type: integer
+                      enum: 
+                       - 1 #company
+                       - 2 #industry
+                    company_name:
+                      type: string
+                    short_name:
+                      type: string
                     industry_name:
                       type: string
                     children_count:
                       type: integer
-                    
+                    children:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        industry_name:
+                          type: string
   /follows:
     get:
       tags:
@@ -244,7 +263,7 @@ paths:
       produces:
         - application/json
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -271,8 +290,6 @@ paths:
                       type: string
                     children_count:
                       type: integer
-                    
-
   /follow:
     delete:
       tags:
@@ -286,12 +303,18 @@ paths:
             properties:
               follow_type:
                 type: integer
-                enum: [1,2]
+                enum:
+                  - 1
+                  - 2
               id:
                 type: integer
       responses:
-        204:
+        '204':
           description: 删除成功
+        '400':
+          description: 删除失败
+          schema:
+            $ref: "#/definitions/Error"
     post:
       tags:
         - follow
@@ -304,14 +327,18 @@ paths:
             properties:
               follow_type:
                 type: integer
-                enum: [1,2]
+                enum:
+                  - 1
+                  - 2
               id:
                 type: integer
       responses:
-        204:
-          description: 删除成功
-          
-          
+        '204':
+          description: 关注成功
+        '400':
+          description: 关注失败
+          schema:
+            $ref: "#/definitions/Error"
   /newfollow:
     post:
       tags:
@@ -328,19 +355,26 @@ paths:
               short_name:
                 type: string
       responses:
-        204:
+        '204':
           description: 关注成功
-        400:
-          description: 关注失败
+        '400':
+          description: 关注失败 
+          schema:
+            $ref: "#/definitions/Error"
 
-      
-
-
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    required:
+      - code
+      - message
 securityDefinitions:
   APISessionHeader:
     type: apiKey
     in: header
     name: X-Session
-
-
-
