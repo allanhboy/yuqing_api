@@ -30,6 +30,7 @@ class AccountLogin(ApiHandler):
                             dbemployee.openid = user.session.openid
                             dbsession.add(dbemployee)
                             dbsession.commit()
+                            dbsession.close()
                             return  None, 204, None
                         else:
                              #判断openid是否一致
@@ -38,14 +39,20 @@ class AccountLogin(ApiHandler):
                                 dbemployee.openid = user.session.openid
                                 dbsession.add(dbemployee)
                                 dbsession.commit()
+                                dbsession.close()
                                 return  None, 204, None
                             else:
+                                dbsession.close()
                                 return  {"code":0,"message":"账号已绑定其他微信"}, 400, None
                     else:
+                        dbsession.close()
                         return  {"code":0,"message":"密码错误"}, 400, None
                 else:
+                    dbsession.close()
                     return  {"code":0,"message":"账号不存在"}, 400, None
             else:
+                dbsession.close()
                 return  {"code":0,"message":"请输入账号或者密码"}, 400, None
         else:
+            dbsession.close()
             return  {"code":0,"message":"未找到微信信息"}, 400, None

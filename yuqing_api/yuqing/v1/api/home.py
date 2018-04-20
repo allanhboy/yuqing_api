@@ -45,5 +45,5 @@ class Home(ApiHandler):
                 var_article['is_read'] = row[4]
                 var_articles.append(var_article)
             respone['articles'] = var_articles
-
+        dbsession.close()
         return respone, 200, None

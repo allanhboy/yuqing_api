@@ -49,6 +49,7 @@ class Follow(ApiHandler):
                 dbemployeefollow.industry_count = dbemployeefollow.instury_count+1
                 dbsession.add(dbemployeefollow)
                 dbsession.commit()
+        dbsession.close()
         return None, 204, None
 
     def delete(self):
@@ -77,4 +78,5 @@ class Follow(ApiHandler):
                 dbemployeefollow.industry_count = dbemployeefollow.instury_count-1
                 dbsession.add(dbemployeefollow)
                 dbsession.commit()
+        dbsession.close()
         return None, 204, None

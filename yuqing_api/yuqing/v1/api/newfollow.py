@@ -56,6 +56,8 @@ class Newfollow(ApiHandler):
                     dbemployeefollow.company_count = dbemployeefollow.company_count+1
                     dbsession.add(dbemployeefollow)
                     dbsession.commit()
+            dbsession.close()
             return None, 204, None
         else:
+            dbsession.close()
             return None ,400,None

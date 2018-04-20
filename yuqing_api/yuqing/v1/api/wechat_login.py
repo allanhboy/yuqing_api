@@ -47,7 +47,9 @@ class WechatLogin(ApiHandler):
             dbsession.add(dbsessioninfo)
             dbsession.commit()
             respone['is_binding'] = 1
+            dbsession.close()
             return respone, 200, None
         else:
             respone['is_binding'] = 0
+            dbsession.close()
             return respone, 400, None

@@ -31,4 +31,5 @@ class Articles(ApiHandler):
                 articleinfodic['time'] = row[3].strftime('%Y-%m-%d %H:%M:%S')
                 articleinfoarray.append(articleinfodic)
             respone['articles'] = articleinfoarray
+            dbsession.close()
             return respone, 200, None

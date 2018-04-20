@@ -24,6 +24,7 @@ class Search(ApiHandler):
                 infodic['follow_type']=1
                 infoarray.append(infodic)
             respone={'follows':infoarray}
+            dbsession.close()
             return respone, 200, None
         else:
             #行业信息
@@ -43,4 +44,5 @@ class Search(ApiHandler):
                 infodic['children'] = children
                 infoarray.append(infodic)
             respone={'follows':infoarray}
+            dbsession.close()
             return respone, 200, None

@@ -21,4 +21,5 @@ class ArticleId(ApiHandler):
             reponse['source'] = dbarticleinfo.source_site
             reponse['source_url'] = dbarticleinfo.url
             reponse['content'] = dbarticleinfo.text
+            dbsession.close()
             return reponse, 200, None

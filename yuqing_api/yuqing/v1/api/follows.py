@@ -36,4 +36,5 @@ class Follows(ApiHandler):
                     industryinfodic['children_count)'] = row[2]
                     industryinfoarray.append(industryinfodic)
                 respone['industry'] = industryinfoarray
+        dbsession.close()
         return respone, 200, None
