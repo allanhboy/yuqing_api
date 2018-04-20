@@ -14,34 +14,43 @@ import six
 base_path = '/v1'
 
 
-DefinitionsError = {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}
+DefinitionsError = {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}
 
 validators = {
+    ('search', 'GET'): {'args': {'properties': {'key': {'type': 'integer'}, 'follow_type': {'enum': [1, 2], 'type': 'integer'}}, 'required': []}},
+    ('wechat_login', 'POST'): {'json': {'type': 'object', 'properties': {'code': {'description': '调用接口wx.login() 获取临时登录凭证（code）', 'type': 'string'}, 'random': {'description': '小程序客户端随机生成6位数字', 'type': 'string'}}}},
+    ('newfollow', 'POST'): {'json': {'type': 'object', 'properties': {'company_name': {'type': 'string'}, 'short_name': {'type': 'string'}}}},
+    ('follow', 'POST'): {'json': {'type': 'object', 'properties': {'id': {'type': 'integer'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}}}},
+    ('follow', 'DELETE'): {'json': {'type': 'object', 'properties': {'id': {'type': 'integer'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}}}},
+    ('account_login', 'POST'): {'json': {'type': 'object', 'properties': {'username': {'type': 'string'}, 'password': {'type': 'string'}}}},
     ('articles', 'GET'): {'args': {'properties': {'key': {'type': 'string'}, 'follow_type': {'type': 'integer'}, 'page_index': {'type': 'integer'}}, 'required': []}},
-    ('follow', 'DELETE'): {'json': {'properties': {'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'id': {'type': 'integer'}}, 'type': 'object'}},
-    ('follow', 'POST'): {'json': {'properties': {'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'id': {'type': 'integer'}}, 'type': 'object'}},
-    ('search', 'GET'): {'args': {'properties': {'key': {'type': 'integer'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}}, 'required': []}},
-    ('account_login', 'POST'): {'json': {'properties': {'password': {'type': 'string'}, 'username': {'type': 'string'}}, 'type': 'object'}},
-    ('wechat_login', 'POST'): {'json': {'properties': {'code': {'description': '调用接口wx.login() 获取临时登录凭证（code）', 'type': 'string'}, 'random': {'description': '小程序客户端随机生成6位数字', 'type': 'string'}}, 'type': 'object'}},
-    ('newfollow', 'POST'): {'json': {'properties': {'company_name': {'type': 'string'}, 'short_name': {'type': 'string'}}, 'type': 'object'}},
 }
 
 filters = {
-    ('article_id', 'GET'): {200: {'schema': {'properties': {'title': {'type': 'string'}, "follow_type'": {'type': 'integer'}, 'content': {'type': 'string'}, 'source': {'type': 'string'}, 'id': {'type': 'integer'}, 'follow_name': {'type': 'string'}, 'source_url': {'type': 'string'}}, 'type': 'object'}, 'headers': None}},
-    ('follows', 'GET'): {200: {'schema': {'properties': {'company': {'type': 'array', 'items': {'properties': {'company_name': {'type': 'string'}, 'id': {'type': 'integer'}, 'short_name': {'type': 'integer'}}, 'type': 'object'}}, 'industry': {'type': 'array', 'items': {'properties': {'children_count': {'type': 'integer'}, 'id': {'type': 'integer'}, 'industry_name': {'type': 'string'}}, 'type': 'object'}}}, 'type': 'object'}, 'headers': None}},
-    ('article_id_invalid', 'PUT'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}, 'headers': None}, 204: {'schema': None, 'headers': None}},
-    ('articles', 'GET'): {200: {'schema': {'properties': {'articles': {'type': 'array', 'items': {'properties': {'title': {'type': 'string'}, "follow_type'": {'type': 'integer', 'enum': [1, 2]}, 'follow_name': {'type': 'string'}, 'time': {'type': 'string'}, 'id': {'type': 'integer'}, 'is_read': {'type': 'integer'}}, 'type': 'object'}}}, 'type': 'object'}, 'headers': None}},
-    ('follow', 'DELETE'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}, 'headers': None}, 204: {'schema': None, 'headers': None}},
-    ('follow', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}, 'headers': None}, 204: {'schema': None, 'headers': None}},
-    ('search', 'GET'): {200: {'schema': {'properties': {'follows': {'type': 'array', 'items': {'properties': {'company_name': {'type': 'string'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'short_name': {'type': 'string'}, 'industry_name': {'type': 'string'}, 'children': {'type': 'array', 'items': {'properties': {'id': {'type': 'string'}, 'industry_name': {'type': 'string'}}, 'type': 'object'}}, 'children_count': {'type': 'integer'}, 'id': {'type': 'integer'}}, 'type': 'object'}}}, 'type': 'object'}, 'headers': None}},
-    ('home', 'GET'): {200: {'schema': {'properties': {'employee': {'properties': {'picture': {'type': 'string'}, 'realname': {'type': 'string'}}, 'type': 'object'}, 'new_company_news': {'type': 'integer'}, 'new_industry_news': {'type': 'integer'}, 'articles': {'type': 'array', 'items': {'properties': {'title': {'type': 'string'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}, 'follow_name': {'type': 'string'}, 'time': {'type': 'string'}, 'id': {'type': 'integer'}, 'is_read': {'type': 'integer'}}, 'type': 'object'}}}, 'type': 'object'}, 'headers': None}},
-    ('account_login', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}, 'headers': None}, 204: {'schema': None, 'headers': None}},
-    ('wechat_login', 'POST'): {200: {'schema': {'properties': {'session': {'description': '小程序登录凭证,对应表session.id', 'type': 'string'}, 'is_binding': {'description': 'openid在表employee找不到返回False,否则为True', 'type': 'boolean'}, 'expire_time': {'description': '对应表session.expire_time', 'type': 'string'}}, 'type': 'object'}, 'headers': None}, 400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}, 'headers': None}},
-    ('newfollow', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'required': ['code', 'message'], 'type': 'object'}, 'headers': None}, 204: {'schema': None, 'headers': None}},
+    ('home', 'GET'): {200: {'schema': {'type': 'object', 'properties': {'employee': {'type': 'object', 'properties': {'realname': {'type': 'string'}, 'picture': {'type': 'string'}}}, 'new_company_news': {'type': 'integer'}, 'articles': {'items': {'type': 'object', 'properties': {'id': {'type': 'integer'}, 'title': {'type': 'string'}, 'follow_name': {'type': 'string'}, 'is_read': {'type': 'integer'}, 'time': {'type': 'string'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}}}, 'type': 'array'}, 'new_industry_news': {'type': 'integer'}}}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('search', 'GET'): {200: {'schema': {'type': 'object', 'properties': {'follows': {'items': {'type': 'object', 'properties': {'id': {'type': 'integer'}, 'industry_name': {'type': 'string'}, 'company_name': {'type': 'string'}, 'short_name': {'type': 'string'}, 'children': {'items': {'type': 'object', 'properties': {'id': {'type': 'string'}, 'industry_name': {'type': 'string'}}}, 'type': 'array'}, 'children_count': {'type': 'integer'}, 'follow_type': {'type': 'integer', 'enum': [1, 2]}}}, 'type': 'array'}}}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('wechat_login', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}, 'headers': None}, 200: {'schema': {'type': 'object', 'properties': {'is_binding': {'description': 'openid在表employee找不到返回False,否则为True', 'type': 'boolean'}, 'expire_time': {'description': '对应表session.expire_time', 'type': 'string'}, 'session': {'description': '小程序登录凭证,对应表session.id', 'type': 'string'}}}, 'headers': None}},
+    ('follows', 'GET'): {200: {'schema': {'type': 'object', 'properties': {'company': {'items': {'type': 'object', 'properties': {'company_name': {'type': 'string'}, 'id': {'type': 'integer'}, 'short_name': {'type': 'integer'}}}, 'type': 'array'}, 'industry': {'items': {'type': 'object', 'properties': {'id': {'type': 'integer'}, 'children_count': {'type': 'integer'}, 'industry_name': {'type': 'string'}}}, 'type': 'array'}}}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('newfollow', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 204: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('article_id', 'GET'): {200: {'schema': {'type': 'object', 'properties': {'id': {'type': 'integer'}, 'source_url': {'type': 'string'}, "follow_type'": {'type': 'integer'}, 'title': {'type': 'string'}, 'source': {'type': 'string'}, 'follow_name': {'type': 'string'}, 'content': {'type': 'string'}}}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('follow', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 204: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('follow', 'DELETE'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 204: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('article_id_invalid', 'PUT'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 204: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
+    ('account_login', 'POST'): {400: {'schema': {'properties': {'code': {'type': 'integer'}, 'message': {'type': 'string'}}, 'type': 'object', 'required': ['code', 'message']}, 'headers': None}, 401: {'schema': None, 'headers': None}, 204: {'schema': None, 'headers': None}},
+    ('articles', 'GET'): {200: {'schema': {'type': 'object', 'properties': {'articles': {'items': {'type': 'object', 'properties': {'id': {'type': 'integer'}, "follow_type'": {'type': 'integer', 'enum': [1, 2]}, 'title': {'type': 'string'}, 'follow_name': {'type': 'string'}, 'is_read': {'type': 'integer'}, 'time': {'type': 'string'}}}, 'type': 'array'}}}, 'headers': None}, 401: {'schema': None, 'headers': None}, 403: {'schema': None, 'headers': None}, 500: {'schema': None, 'headers': None}},
 }
 
 scopes = {
+    ('home', 'GET'): [],
+    ('search', 'GET'): [],
+    ('follows', 'GET'): [],
+    ('newfollow', 'POST'): [],
+    ('article_id', 'GET'): [],
+    ('follow', 'POST'): [],
+    ('follow', 'DELETE'): [],
+    ('article_id_invalid', 'PUT'): [],
     ('account_login', 'POST'): [],
+    ('articles', 'GET'): [],
 }
 
 

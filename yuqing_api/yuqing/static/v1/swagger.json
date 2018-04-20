@@ -1,71 +1,289 @@
 {
-  "securityDefinitions": {
-    "APISessionHeader": {
-      "name": "X-Session",
-      "in": "header",
-      "type": "apiKey"
-    }
-  },
+  "produces": [
+    "application/json"
+  ],
   "basePath": "/v1",
+  "consumes": [
+    "application/json"
+  ],
+  "info": {
+    "title": "\u76db\u5143\u8206\u60c5\u76d1\u63a7\u5fae\u4fe1\u5c0f\u7a0b\u5e8fAPI",
+    "description": "\u76db\u5143\u8206\u60c5\u76d1\u63a7\u5fae\u4fe1\u5c0f\u7a0b\u5e8fAPI",
+    "version": "1.0.0"
+  },
+  "swagger": "2.0",
   "paths": {
+    "/follows": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "summary": "\u5173\u6ce8\u5217\u8868",
+        "responses": {
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "company": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "company_name": {
+                        "type": "string"
+                      },
+                      "short_name": {
+                        "type": "integer"
+                      },
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "type": "array"
+                },
+                "industry": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "children_count": {
+                        "type": "integer"
+                      },
+                      "industry_name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
+          }
+        },
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "follow"
+        ]
+      }
+    },
+    "/newfollow": {
+      "post": {
+        "summary": "\u65b0\u7684\u5173\u6ce8",
+        "responses": {
+          "204": {
+            "description": "\u5173\u6ce8\u6210\u529f"
+          },
+          "400": {
+            "description": "\u5173\u6ce8\u5931\u8d25",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "company_name": {
+                  "type": "string"
+                },
+                "short_name": {
+                  "type": "string"
+                }
+              }
+            },
+            "name": "newfollow"
+          }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "follow"
+        ]
+      }
+    },
+    "/account/login": {
+      "post": {
+        "summary": "\u5458\u5de5\u767b\u5f55",
+        "responses": {
+          "204": {
+            "description": "\u767b\u5f55\u6210\u529f"
+          },
+          "400": {
+            "description": "\u767b\u5f55\u5931\u8d25",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            },
+            "name": "account"
+          }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "login"
+        ]
+      }
+    },
     "/article/{id}": {
       "get": {
+        "summary": "\u8206\u60c5\u8be6\u60c5",
         "responses": {
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
           "200": {
+            "description": "OK",
             "schema": {
+              "type": "object",
               "properties": {
-                "title": {
-                  "type": "string"
-                },
-                "follow_type'": {
-                  "type": "integer"
-                },
-                "content": {
-                  "type": "string"
-                },
-                "follow_name": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "integer"
-                },
                 "source": {
                   "type": "string"
                 },
                 "source_url": {
                   "type": "string"
+                },
+                "follow_type'": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "follow_name": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
                 }
-              },
-              "type": "object"
-            },
-            "description": "OK"
+              }
+            }
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
           }
         },
-        "tags": [
-          "articledetails"
-        ],
-        "summary": "\u8206\u60c5\u8be6\u60c5",
         "parameters": [
           {
-            "required": true,
-            "name": "id",
             "description": "Numeric ID of the user to get.",
+            "in": "path",
+            "required": true,
             "type": "integer",
-            "in": "path"
+            "name": "id"
           }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "yuqing"
         ]
       }
     },
-    "/search": {
+    "/home": {
       "get": {
+        "produces": [
+          "application/json"
+        ],
+        "summary": "\u76d1\u63a7\u4e2d\u5fc3",
         "responses": {
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
           "200": {
+            "description": "OK",
             "schema": {
+              "type": "object",
               "properties": {
-                "follows": {
+                "employee": {
+                  "type": "object",
+                  "properties": {
+                    "realname": {
+                      "type": "string"
+                    },
+                    "picture": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "new_company_news": {
+                  "type": "integer"
+                },
+                "articles": {
                   "items": {
+                    "type": "object",
                     "properties": {
-                      "company_name": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "follow_name": {
+                        "type": "string"
+                      },
+                      "is_read": {
+                        "type": "integer"
+                      },
+                      "time": {
                         "type": "string"
                       },
                       "follow_type": {
@@ -74,15 +292,213 @@
                           1,
                           2
                         ]
-                      },
+                      }
+                    }
+                  },
+                  "type": "array"
+                },
+                "new_industry_news": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
+          }
+        },
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "yuqing"
+        ]
+      }
+    },
+    "/follow": {
+      "post": {
+        "summary": "\u5bf9\u5df2\u6709\u516c\u53f8\u6216\u884c\u4e1a\u5173\u6ce8",
+        "responses": {
+          "204": {
+            "description": "\u5173\u6ce8\u6210\u529f"
+          },
+          "400": {
+            "description": "\u5173\u6ce8\u5931\u8d25",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "follow_type": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2
+                  ]
+                }
+              }
+            },
+            "name": "follow"
+          }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "follow"
+        ]
+      },
+      "delete": {
+        "summary": "\u5220\u9664\u5173\u6ce8",
+        "responses": {
+          "204": {
+            "description": "\u5220\u9664\u6210\u529f"
+          },
+          "400": {
+            "description": "\u5220\u9664\u5931\u8d25",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "follow_type": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2
+                  ]
+                }
+              }
+            },
+            "name": "deletefollow"
+          }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "follow"
+        ]
+      }
+    },
+    "/article/{id}/invalid": {
+      "put": {
+        "summary": "\u65e0\u6548\u4fe1\u606f",
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "\u5931\u8d25",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
+          }
+        },
+        "parameters": [
+          {
+            "description": "Numeric ID of the user to get.",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "name": "id"
+          }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "yuqing"
+        ]
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "\u641c\u7d22\u63d0\u793a",
+        "responses": {
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "follows": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
                       "short_name": {
                         "type": "string"
                       },
                       "industry_name": {
                         "type": "string"
                       },
+                      "company_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
                       "children": {
                         "items": {
+                          "type": "object",
                           "properties": {
                             "id": {
                               "type": "string"
@@ -90,119 +506,12 @@
                             "industry_name": {
                               "type": "string"
                             }
-                          },
-                          "type": "object"
+                          }
                         },
                         "type": "array"
                       },
                       "children_count": {
                         "type": "integer"
-                      },
-                      "id": {
-                        "type": "integer"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "description": "OK"
-          }
-        },
-        "tags": [
-          "search"
-        ],
-        "summary": "\u641c\u7d22\u63d0\u793a",
-        "parameters": [
-          {
-            "name": "key",
-            "type": "integer",
-            "in": "query"
-          },
-          {
-            "name": "follow_type",
-            "type": "integer",
-            "in": "query",
-            "enum": [
-              1,
-              2
-            ]
-          }
-        ]
-      }
-    },
-    "/follows": {
-      "get": {
-        "responses": {
-          "200": {
-            "schema": {
-              "properties": {
-                "company": {
-                  "items": {
-                    "properties": {
-                      "company_name": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "short_name": {
-                        "type": "integer"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "industry": {
-                  "items": {
-                    "properties": {
-                      "children_count": {
-                        "type": "integer"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "industry_name": {
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            },
-            "description": "OK"
-          }
-        },
-        "tags": [
-          "attentionlist"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "summary": "\u5173\u6ce8\u5217\u8868"
-      }
-    },
-    "/home": {
-      "get": {
-        "responses": {
-          "200": {
-            "schema": {
-              "properties": {
-                "new_company_news": {
-                  "type": "integer"
-                },
-                "articles": {
-                  "items": {
-                    "properties": {
-                      "title": {
-                        "type": "string"
                       },
                       "follow_type": {
                         "type": "integer",
@@ -210,92 +519,121 @@
                           1,
                           2
                         ]
-                      },
-                      "time": {
-                        "type": "string"
-                      },
-                      "is_read": {
-                        "type": "integer"
-                      },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "follow_name": {
-                        "type": "string"
                       }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "new_industry_news": {
-                  "type": "integer"
-                },
-                "employee": {
-                  "properties": {
-                    "picture": {
-                      "type": "string"
-                    },
-                    "realname": {
-                      "type": "string"
                     }
                   },
-                  "type": "object"
+                  "type": "array"
                 }
-              },
-              "type": "object"
-            },
-            "description": "OK"
-          }
-        },
-        "tags": [
-          "home"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "summary": "\u76d1\u63a7\u4e2d\u5fc3"
-      }
-    },
-    "/article/{id}/invalid": {
-      "put": {
-        "responses": {
-          "204": {
-            "description": "OK"
+              }
+            }
           },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/Error"
-            },
-            "description": "\u5931\u8d25"
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
           }
         },
-        "tags": [
-          "Invalidinformation"
-        ],
-        "summary": "\u65e0\u6548\u4fe1\u606f",
         "parameters": [
           {
-            "required": true,
-            "name": "id",
-            "description": "Numeric ID of the user to get.",
+            "in": "query",
             "type": "integer",
-            "in": "path"
+            "name": "key"
+          },
+          {
+            "in": "query",
+            "enum": [
+              1,
+              2
+            ],
+            "type": "integer",
+            "name": "follow_type"
           }
+        ],
+        "security": [
+          {
+            "APISessionHeader": []
+          }
+        ],
+        "tags": [
+          "search"
+        ]
+      }
+    },
+    "/wechat/login": {
+      "post": {
+        "summary": "\u5fae\u4fe1\u767b\u5f55\u6388\u6743",
+        "responses": {
+          "400": {
+            "description": "\u5fae\u4fe1\u6388\u6743\u5931\u8d25",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "is_binding": {
+                  "description": "openid\u5728\u8868employee\u627e\u4e0d\u5230\u8fd4\u56deFalse,\u5426\u5219\u4e3aTrue",
+                  "type": "boolean"
+                },
+                "expire_time": {
+                  "description": "\u5bf9\u5e94\u8868session.expire_time",
+                  "type": "string"
+                },
+                "session": {
+                  "description": "\u5c0f\u7a0b\u5e8f\u767b\u5f55\u51ed\u8bc1,\u5bf9\u5e94\u8868session.id",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "description": "\u5fae\u4fe1\u6388\u6743.",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "\u8c03\u7528\u63a5\u53e3wx.login() \u83b7\u53d6\u4e34\u65f6\u767b\u5f55\u51ed\u8bc1\uff08code\uff09",
+                  "type": "string"
+                },
+                "random": {
+                  "description": "\u5c0f\u7a0b\u5e8f\u5ba2\u6237\u7aef\u968f\u673a\u751f\u62106\u4f4d\u6570\u5b57",
+                  "type": "string"
+                }
+              }
+            },
+            "name": "wechatcode"
+          }
+        ],
+        "tags": [
+          "login"
         ]
       }
     },
     "/articles": {
       "get": {
+        "summary": "\u8206\u60c5\u5217\u8868",
         "responses": {
+          "403": {
+            "description": "\u672a\u7ed1\u5b9a"
+          },
           "200": {
+            "description": "OK",
             "schema": {
+              "type": "object",
               "properties": {
                 "articles": {
                   "items": {
+                    "type": "object",
                     "properties": {
-                      "title": {
-                        "type": "string"
+                      "id": {
+                        "type": "integer"
                       },
                       "follow_type'": {
                         "type": "integer",
@@ -304,266 +642,67 @@
                           2
                         ]
                       },
-                      "time": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "follow_name": {
                         "type": "string"
                       },
                       "is_read": {
                         "type": "integer"
                       },
-                      "id": {
-                        "type": "integer"
-                      },
-                      "follow_name": {
+                      "time": {
                         "type": "string"
                       }
-                    },
-                    "type": "object"
+                    }
                   },
                   "type": "array"
                 }
-              },
-              "type": "object"
-            },
-            "description": "OK"
+              }
+            }
+          },
+          "401": {
+            "description": "\u672a\u767b\u5f55"
+          },
+          "500": {
+            "description": "\u670d\u52a1\u5668\u5f02\u5e38"
           }
         },
-        "tags": [
-          "articlelist"
-        ],
-        "summary": "\u8206\u60c5\u5217\u8868",
         "parameters": [
           {
-            "name": "page_index",
+            "in": "query",
             "type": "integer",
-            "in": "query"
+            "name": "page_index"
           },
           {
-            "name": "follow_type",
+            "in": "query",
             "type": "integer",
-            "in": "query"
+            "name": "follow_type"
           },
           {
-            "name": "key",
+            "in": "query",
             "type": "string",
-            "in": "query"
+            "name": "key"
           }
-        ]
-      }
-    },
-    "/account/login": {
-      "post": {
-        "responses": {
-          "204": {
-            "description": "\u767b\u5f55\u6210\u529f"
-          },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/Error"
-            },
-            "description": "\u767b\u5f55\u5931\u8d25"
-          }
-        },
-        "tags": [
-          "account"
         ],
-        "summary": "\u5458\u5de5\u767b\u5f55",
         "security": [
           {
             "APISessionHeader": []
           }
         ],
-        "parameters": [
-          {
-            "schema": {
-              "properties": {
-                "password": {
-                  "type": "string"
-                },
-                "username": {
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "in": "body",
-            "name": "account"
-          }
-        ]
-      }
-    },
-    "/follow": {
-      "delete": {
-        "responses": {
-          "204": {
-            "description": "\u5220\u9664\u6210\u529f"
-          },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/Error"
-            },
-            "description": "\u5220\u9664\u5931\u8d25"
-          }
-        },
         "tags": [
-          "deletefollow"
-        ],
-        "summary": "\u5220\u9664\u5173\u6ce8",
-        "parameters": [
-          {
-            "schema": {
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "follow_type": {
-                  "type": "integer",
-                  "enum": [
-                    1,
-                    2
-                  ]
-                }
-              },
-              "type": "object"
-            },
-            "in": "body",
-            "name": "deletefollow"
-          }
-        ]
-      },
-      "post": {
-        "responses": {
-          "204": {
-            "description": "\u5173\u6ce8\u6210\u529f"
-          },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/Error"
-            },
-            "description": "\u5173\u6ce8\u5931\u8d25"
-          }
-        },
-        "tags": [
-          "follow"
-        ],
-        "summary": "\u5bf9\u5df2\u6709\u516c\u53f8\u6216\u884c\u4e1a\u5173\u6ce8",
-        "parameters": [
-          {
-            "schema": {
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "follow_type": {
-                  "type": "integer",
-                  "enum": [
-                    1,
-                    2
-                  ]
-                }
-              },
-              "type": "object"
-            },
-            "in": "body",
-            "name": "follow"
-          }
-        ]
-      }
-    },
-    "/wechat/login": {
-      "post": {
-        "responses": {
-          "200": {
-            "schema": {
-              "properties": {
-                "session": {
-                  "description": "\u5c0f\u7a0b\u5e8f\u767b\u5f55\u51ed\u8bc1,\u5bf9\u5e94\u8868session.id",
-                  "type": "string"
-                },
-                "is_binding": {
-                  "description": "openid\u5728\u8868employee\u627e\u4e0d\u5230\u8fd4\u56deFalse,\u5426\u5219\u4e3aTrue",
-                  "type": "boolean"
-                },
-                "expire_time": {
-                  "description": "\u5bf9\u5e94\u8868session.expire_time",
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "description": "OK"
-          },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/Error"
-            },
-            "description": "\u5fae\u4fe1\u6388\u6743\u5931\u8d25"
-          }
-        },
-        "tags": [
-          "wechat"
-        ],
-        "summary": "\u5fae\u4fe1\u767b\u5f55\u6388\u6743",
-        "parameters": [
-          {
-            "description": "\u5fae\u4fe1\u6388\u6743.",
-            "schema": {
-              "properties": {
-                "random": {
-                  "description": "\u5c0f\u7a0b\u5e8f\u5ba2\u6237\u7aef\u968f\u673a\u751f\u62106\u4f4d\u6570\u5b57",
-                  "type": "string"
-                },
-                "code": {
-                  "description": "\u8c03\u7528\u63a5\u53e3wx.login() \u83b7\u53d6\u4e34\u65f6\u767b\u5f55\u51ed\u8bc1\uff08code\uff09",
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "in": "body",
-            "name": "wechatcode"
-          }
-        ]
-      }
-    },
-    "/newfollow": {
-      "post": {
-        "responses": {
-          "204": {
-            "description": "\u5173\u6ce8\u6210\u529f"
-          },
-          "400": {
-            "schema": {
-              "$ref": "#/definitions/Error"
-            },
-            "description": "\u5173\u6ce8\u5931\u8d25"
-          }
-        },
-        "tags": [
-          "newfollow"
-        ],
-        "summary": "\u65b0\u7684\u5173\u6ce8",
-        "parameters": [
-          {
-            "schema": {
-              "properties": {
-                "company_name": {
-                  "type": "string"
-                },
-                "short_name": {
-                  "type": "string"
-                }
-              },
-              "type": "object"
-            },
-            "in": "body",
-            "name": "newfollow"
-          }
+          "yuqing"
         ]
       }
     }
   },
   "definitions": {
     "Error": {
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object",
       "properties": {
         "code": {
           "type": "integer"
@@ -571,24 +710,14 @@
         "message": {
           "type": "string"
         }
-      },
-      "required": [
-        "code",
-        "message"
-      ],
-      "type": "object"
+      }
     }
   },
-  "swagger": "2.0",
-  "info": {
-    "title": "\u76db\u5143\u8206\u60c5\u76d1\u63a7\u5fae\u4fe1\u5c0f\u7a0b\u5e8fAPI",
-    "description": "\u76db\u5143\u8206\u60c5\u76d1\u63a7\u5fae\u4fe1\u5c0f\u7a0b\u5e8fAPI",
-    "version": "1.0.0"
-  },
-  "produces": [
-    "application/json"
-  ],
-  "consumes": [
-    "application/json"
-  ]
+  "securityDefinitions": {
+    "APISessionHeader": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-Session"
+    }
+  }
 }
