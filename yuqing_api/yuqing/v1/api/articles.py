@@ -17,6 +17,7 @@ class Articles(ApiHandler):
         user = self.get_current_user()
         if user.valid:
             dbsession = _connectDBdata_()
+            #文章信息获取
             respone = {}
             articleinfoarray = []
             for row in dbsession.query(article.id,article.title,employee_article.is_read,employee_article.send_time)\

@@ -17,26 +17,32 @@ class Follow(ApiHandler):
         user = self.get_current_user()
         if user.valid:
             dbsession = _connectDBdata_()
+            #关注公司信息
             if follow_type == 1:
                 dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()
+                #对已取消进行关注操作
                 if dbcompanyinfo:
                     dbcompanyinfo.is_follow = 1
                     dbcompanyinfo.follow_time = datetime.now()
                     dbsession.add(dbcompanyinfo)
-                else:     
+                else: 
+                #第一次关注    
                     dbcompanyinfo = follow_company(employee_id=user.employee.id,company_id= id)
                     dbsession.add(dbcompanyinfo)
                 dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
                 dbemployeefollow.company_count = dbemployeefollow.company_count+1
                 dbsession.add(dbemployeefollow)
                 dbsession.commit()
+            #关注行业信息
             if follow_type == 2:
                 dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
+                #对已取消进行关注操作
                 if dbindustryinfo:
                     dbindustryinfo.is_follow = 1
                     dbindustryinfo.follow_time = datetime.now()
                     dbsession.add(dbindustryinfo)
-                else:     
+                else:
+                #第一次关注    
                     dbindustryinfo = follow_company(employee_id=user.employee.id,industry_id= id)
                     dbsession.add(dbindustryinfo)
                 dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
@@ -51,6 +57,7 @@ class Follow(ApiHandler):
         user = self.get_current_user()
         if user.valid:
             dbsession = _connectDBdata_()
+            #取消关注公司信息
             if follow_type == 1:
                 dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()      
                 dbcompanyinfo.is_follow = 0
@@ -60,6 +67,7 @@ class Follow(ApiHandler):
                 dbemployeefollow.company_count = dbemployeefollow.company_count-1
                 dbsession.add(dbemployeefollow)
                 dbsession.commit()
+            #取消关注行业信息
             if follow_type == 2:
                 dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
                 dbindustryinfo.is_follow = 0

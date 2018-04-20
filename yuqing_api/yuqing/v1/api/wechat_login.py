@@ -19,6 +19,7 @@ class WechatLogin(ApiHandler):
         random =  self.json['random']
         appid = 'wx1154d8019b1db191'
         appscred = '12d3e5086ac152c27e6d2cd30966b326'
+        #获取微信opneid等信息
         url = 'https://api.weixin.qq.com/sns/jscode2session?appid={APPID}&secret={SECRET}&js_code={JSCODE}&grant_type=authorization_code'.format(APPID=appid,SECRET=appscred,JSCODE=code)
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req) as response:
@@ -28,6 +29,7 @@ class WechatLogin(ApiHandler):
         session_key = weixininfo['session_key']
         openid = weixininfo['openid']
 
+        #微信信息插入session表
         respone = {}
         id = uuid.uuid1()
         expiretime=datetime.now()+timedelta(days=7)
@@ -37,6 +39,7 @@ class WechatLogin(ApiHandler):
         respone['session'] = sessioninfo.id
         respone['expire_time'] = sessioninfo.expire_time.strftime('%Y-%m-%d %H:%M:%S') 
 
+        #判断employee是否绑定openid,绑定给session的employee赋值
         dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).first()
         if dbemployeeid:
             dbsessioninfo = dbsession.query(session).filter_by(openid=openid).order_by(session.create_time.desc()).first()
@@ -47,4 +50,4 @@ class WechatLogin(ApiHandler):
             return respone, 200, None
         else:
             respone['is_binding'] = 0
-            return respone, 403, None
+            return respone, 400, None

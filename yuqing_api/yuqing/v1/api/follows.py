@@ -16,6 +16,7 @@ class Follows(ApiHandler):
             dbsession = _connectDBdata_()
             dbfollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one()
             respone = {}
+            #公司关注信息
             if dbfollow.company_count > 0:
                 companyinfoarray = []
                 for row in dbsession.query(company.id,company.company_name,company.short_name).join(follow_company,company.id==follow_company.company_id).filter(and_(follow_company.employee_id==user.employee.id),follow_company.is_follow==1).all():
@@ -25,6 +26,7 @@ class Follows(ApiHandler):
                     companyinfodic['short_name'] = row[2]
                     companyinfoarray.append(companyinfodic)
                 respone['company'] = companyinfoarray
+            #行业关注信息
             if dbfollow.industry_count >0:
                 industryinfoarray = []
                 for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).all():

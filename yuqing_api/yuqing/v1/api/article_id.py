@@ -13,6 +13,7 @@ class ArticleId(ApiHandler):
         user = self.get_current_user()
         if user.valid:
             dbsession = _connectDBdata_()
+            #文章详情信息获取
             dbarticleinfo = dbsession.query(article).filter(article.id == id).one()
             reponse = {}
             reponse['id'] = dbarticleinfo.id
