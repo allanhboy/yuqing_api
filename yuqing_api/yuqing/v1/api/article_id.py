@@ -5,7 +5,8 @@ from . import ApiHandler
 from .. import schemas
 
 
-from core.PackageDB import article,_connectDBdata_
+from core.PackageDB import article,employee_article,_connectDBdata_
+from sqlalchemy import and_
 
 class ArticleId(ApiHandler):
 
@@ -21,5 +22,8 @@ class ArticleId(ApiHandler):
             reponse['source'] = dbarticleinfo.source_site
             reponse['source_url'] = dbarticleinfo.url
             reponse['content'] = dbarticleinfo.text
+            dbsession.query(employee_article).filter(and_(employee_article.article_id == id,employee_article.employee_id == user.employee.id)).update({'is_read':1})
+            dbsession.commit()
             dbsession.close()
             return reponse, 200, None
+        return None,400,None

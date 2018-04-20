@@ -22,7 +22,7 @@ class Articles(ApiHandler):
             articleinfoarray = []
             for row in dbsession.query(article.id,article.title,employee_article.is_read,employee_article.send_time)\
                 .join(employee_article,article.id == employee_article.article_id)\
-                .filter(and_(employee_article.employee_id == user.employee.id,employee_article.is_send==0,employee_article.is_invalid==0)).order_by(employee_article.send_time.desc()).slice((page_index - 1) * page_size, page_index * page_size):
+                .filter(and_(employee_article.employee_id == user.employee.id,employee_article.is_invalid==0)).order_by(employee_article.send_time.desc()).slice((page_index - 1) * page_size, page_index * page_size):
                 articleinfodic = {}
                 articleinfodic['id'] = row[0]
                 articleinfodic['title'] = row[1]
