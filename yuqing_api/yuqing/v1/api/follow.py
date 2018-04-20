@@ -12,71 +12,79 @@ from core.PackageDB import follow_company,follow_industry,employee_follow,_conne
 class Follow(ApiHandler):
 
     def post(self):
+        user = self.get_current_user()
+        if not user.valid:
+            return None ,401,None
+        if user.employee.id is None:
+            return None ,403,None
         follow_type = self.json['follow_type']
         id = self.json['id']
-        user = self.get_current_user()
-        if user.valid:
-            dbsession = _connectDBdata_()
-            #关注公司信息
-            if follow_type == 1:
-                dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()
-                #对已取消进行关注操作
-                if dbcompanyinfo:
-                    dbcompanyinfo.is_follow = 1
-                    dbcompanyinfo.follow_time = datetime.now()
-                    dbsession.add(dbcompanyinfo)
-                else: 
-                #第一次关注    
-                    dbcompanyinfo = follow_company(employee_id=user.employee.id,company_id= id)
-                    dbsession.add(dbcompanyinfo)
-                dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-                dbemployeefollow.company_count = dbemployeefollow.company_count+1
-                dbsession.add(dbemployeefollow)
-                dbsession.commit()
-            #关注行业信息
-            if follow_type == 2:
-                dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
-                #对已取消进行关注操作
-                if dbindustryinfo:
-                    dbindustryinfo.is_follow = 1
-                    dbindustryinfo.follow_time = datetime.now()
-                    dbsession.add(dbindustryinfo)
-                else:
-                #第一次关注    
-                    dbindustryinfo = follow_company(employee_id=user.employee.id,industry_id= id)
-                    dbsession.add(dbindustryinfo)
-                dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-                dbemployeefollow.industry_count = dbemployeefollow.instury_count+1
-                dbsession.add(dbemployeefollow)
-                dbsession.commit()
+
+        dbsession = _connectDBdata_()
+        #关注公司信息
+        if follow_type == 1:
+            dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()
+            #对已取消进行关注操作
+            if dbcompanyinfo:
+                dbcompanyinfo.is_follow = 1
+                dbcompanyinfo.follow_time = datetime.now()
+                dbsession.add(dbcompanyinfo)
+            else: 
+            #第一次关注    
+                dbcompanyinfo = follow_company(employee_id=user.employee.id,company_id= id)
+                dbsession.add(dbcompanyinfo)
+            dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
+            dbemployeefollow.company_count = dbemployeefollow.company_count+1
+            dbsession.add(dbemployeefollow)
+            dbsession.commit()
+        #关注行业信息
+        if follow_type == 2:
+            dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
+            #对已取消进行关注操作
+            if dbindustryinfo:
+                dbindustryinfo.is_follow = 1
+                dbindustryinfo.follow_time = datetime.now()
+                dbsession.add(dbindustryinfo)
+            else:
+            #第一次关注    
+                dbindustryinfo = follow_company(employee_id=user.employee.id,industry_id= id)
+                dbsession.add(dbindustryinfo)
+            dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
+            dbemployeefollow.industry_count = dbemployeefollow.instury_count+1
+            dbsession.add(dbemployeefollow)
+            dbsession.commit()
         dbsession.close()
         return None, 204, None
 
     def delete(self):
+        user = self.get_current_user()
+        if not user.valid:
+            return None ,401,None
+        if user.employee.id is None:
+            return None ,403,None
         follow_type = self.json['follow_type']
         id = self.json['id']
-        user = self.get_current_user()
-        if user.valid:
-            dbsession = _connectDBdata_()
-            #取消关注公司信息
-            if follow_type == 1:
-                dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()      
-                dbcompanyinfo.is_follow = 0
-                dbcompanyinfo.unfollow_time = datetime.now()
-                dbsession.add(dbcompanyinfo)
-                dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-                dbemployeefollow.company_count = dbemployeefollow.company_count-1
-                dbsession.add(dbemployeefollow)
-                dbsession.commit()
-            #取消关注行业信息
-            if follow_type == 2:
-                dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
-                dbindustryinfo.is_follow = 0
-                dbindustryinfo.unfollow_time = datetime.now()
-                dbsession.add(dbindustryinfo)
-                dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-                dbemployeefollow.industry_count = dbemployeefollow.instury_count-1
-                dbsession.add(dbemployeefollow)
-                dbsession.commit()
+
+        dbsession = _connectDBdata_()
+        #取消关注公司信息
+        if follow_type == 1:
+            dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()      
+            dbcompanyinfo.is_follow = 0
+            dbcompanyinfo.unfollow_time = datetime.now()
+            dbsession.add(dbcompanyinfo)
+            dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
+            dbemployeefollow.company_count = dbemployeefollow.company_count-1
+            dbsession.add(dbemployeefollow)
+            dbsession.commit()
+        #取消关注行业信息
+        if follow_type == 2:
+            dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
+            dbindustryinfo.is_follow = 0
+            dbindustryinfo.unfollow_time = datetime.now()
+            dbsession.add(dbindustryinfo)
+            dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
+            dbemployeefollow.industry_count = dbemployeefollow.instury_count-1
+            dbsession.add(dbemployeefollow)
+            dbsession.commit()
         dbsession.close()
         return None, 204, None

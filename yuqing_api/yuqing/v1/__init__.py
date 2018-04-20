@@ -16,6 +16,7 @@ class UserInfo(object):
         self.blueprint = blueprint
         dbsession = _connectDBdata_()
         self.valid = dbsession.query(session).filter(session.id == session_id).count() > 0
+        dbsession.close()
 
     @property
     def scopes(self):
@@ -33,7 +34,7 @@ class UserInfo(object):
                 # TODO: test
                 dbsession = _connectDBdata_()
                 self._session = dbsession.query(session).filter(session.id == self.session_id).one()
-                
+                dbsession.close()    
         return self._session
 
     @property
@@ -44,5 +45,5 @@ class UserInfo(object):
                 if sess:
                     dbsession = _connectDBdata_()
                     self._employee = dbsession.query(employee).filter(employee.id == sess.employee_id).one_or_none()
-
+                    dbsession.close()
         return self._employee
