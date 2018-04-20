@@ -34,7 +34,7 @@ class Search(ApiHandler):
                 infodic['children_count)'] = row[2]
                 infodic['follow_type']=2
                 children = []
-                @#子行业信息
+                #子行业信息
                 for  childrenrow in dbsession.query(industry.id,industry.industry_name).filter(industry.parent_id == row[0]).all():
                     childrendic = {}
                     childrendic['id'] = childrenrow[0]
