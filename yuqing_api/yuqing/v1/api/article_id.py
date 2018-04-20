@@ -5,8 +5,19 @@ from . import ApiHandler
 from .. import schemas
 
 
+from core.PackageDB import article,_connectDBdata_
+
 class ArticleId(ApiHandler):
 
     def get(self, id):
-        print(id)
-        return {}, 200, None
+        user = self.get_current_user()
+        if user.valid:
+            dbsession = _connectDBdata_()
+            dbarticleinfo = dbsession.query(article).filter(article.id == id).one()
+            reponse = {}
+            reponse['id'] = dbarticleinfo.id
+            reponse['title'] = dbarticleinfo.title
+            reponse['source'] = dbarticleinfo.source_site
+            reponse['source_url'] = dbarticleinfo.url
+            reponse['content'] = dbarticleinfo.text
+            return reponse, 200, None
