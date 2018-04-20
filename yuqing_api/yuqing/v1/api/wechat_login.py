@@ -24,7 +24,7 @@ class WechatLogin(ApiHandler):
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req) as response:
             the_page = response.read()
-        the_page_utf_8 = the_page.decode(encoding="utf-8")
+        the_page_utf_8 = the_page
         weixininfo = json.loads(the_page_utf_8)
         session_key = weixininfo['session_key']
         openid = weixininfo['openid']
