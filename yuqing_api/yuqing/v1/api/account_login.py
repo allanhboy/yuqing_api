@@ -44,6 +44,7 @@ class AccountLogin(ApiHandler):
                             dbsession.close()
                             return  None, 204, None
                         else:
+                            print('1111')
                             dbsession.close()
                             return  {"code":400,"message":"账号已绑定其他微信"}, 400, None
                 else:

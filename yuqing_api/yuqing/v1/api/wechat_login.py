@@ -42,8 +42,6 @@ class WechatLogin(ApiHandler):
         respone['session'] = sessioninfo.id
         respone['expire_time'] = sessioninfo.expire_time.strftime('%Y-%m-%d %H:%M:%S')
 
-        # return {'session': '11', 'is_binding': 0, 'expire_time': '' },200,None
-
         # #判断employee是否绑定openid,绑定给session的employee赋值
         dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).one_or_none()
         if dbemployeeid:       

@@ -7,7 +7,7 @@ from .. import schemas
 
 from datetime import datetime, timedelta
 
-from core.PackageDB import company,employee_follow,follow_company,_connectDBdata_
+from core.PackageDB import company,employee_follow,follow_company,company_article,employee_article,_connectDBdata_
 
 class Newfollow(ApiHandler):
 
@@ -34,7 +34,6 @@ class Newfollow(ApiHandler):
             dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id ).one()
             dbemployeefollow.company_count = dbemployeefollow.company_count+1
             dbsession.add(dbemployeefollow)
-            dbsession.commit()
         else:
             dbfollowcompany = dbsession.query(follow_company).filter(follow_company.company_id == dbcompanyinfo.id).one_or_none()
             if dbfollowcompany:
@@ -49,7 +48,6 @@ class Newfollow(ApiHandler):
                     dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id ).one()
                     dbemployeefollow.company_count = dbemployeefollow.company_count+1
                     dbsession.add(dbemployeefollow)
-                    dbsession.commit()
             else: 
                 #公司已经存在，无关注数据
                 dbfollowcompany = follow_company(employee_id=user.employee.id,company_id=dbcompanyinfo.id)
@@ -57,6 +55,14 @@ class Newfollow(ApiHandler):
                 dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id ).one()
                 dbemployeefollow.company_count = dbemployeefollow.company_count+1
                 dbsession.add(dbemployeefollow)
-                dbsession.commit()
+        #操作员工关注文章
+        faker_employee_article = []
+        for row in dbsession.query(company_article.article_id).filter(company_article.company_id == dbcompanyinfo.company_id).all():
+            dbemployeearticleinfo = dbsession.query(employee_article).filter(employee_article.article_id == row[0]).one_or_none()
+            if dbemployeearticleinfo is None:
+                dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 1,is_send=1,send_time = datetime.now())
+                faker_employee_article.append(dbemployeearticleinfo)
+        dbsession.add_all(faker_employee_article)
+        dbsession.commit()
         dbsession.close()
         return None, 204, None
