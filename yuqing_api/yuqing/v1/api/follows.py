@@ -30,6 +30,8 @@ class Follows(ApiHandler):
                 companyinfodic['short_name'] = row[2]
                 companyinfoarray.append(companyinfodic)
             respone['company'] = companyinfoarray
+        else:
+            respone['company'] = []
         #行业关注信息
         if dbfollow.industry_count >0:
             industryinfoarray = []
@@ -40,5 +42,7 @@ class Follows(ApiHandler):
                 industryinfodic['children_count)'] = row[2]
                 industryinfoarray.append(industryinfodic)
             respone['industry'] = industryinfoarray
+        else:
+            respone['industry'] = []
         dbsession.close()
         return respone, 200, None
