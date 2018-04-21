@@ -39,16 +39,12 @@ class Home(ApiHandler):
             .count()
 
         # 新增行业舆情数
-        respone['new_industry_news'] =  dbsession.query(article.id)\
+        respone['new_industry_news'] = dbsession.query(article.id)\
             .join(industry_article, article.id == industry_article.article_id)\
             .join(follow_industry, follow_industry.industry_id == industry_article.industry_id)\
             .join(employee_article, employee_article.article_id == article.id)\
             .filter(and_(follow_industry.is_follow == 1, employee_article.is_invalid == 0,follow_industry.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))\
             .count()
-        
-        dbsession.query(employee_article.article_id)\
-        .filter(and_(employee_article.employee_id == user.employee.id, employee_article.is_send == 1, employee_article.is_invalid == 0,employee_article.is_read == 0))\
-        .join(, industry_article.article_id == employee_article.article_id).distinct().count()
 
         # 公司第一页舆情列表
         var_articles = []
