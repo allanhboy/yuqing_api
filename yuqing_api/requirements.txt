@@ -2,3 +2,5 @@ tornado
 jsonschema
 six
 werkzeug
+sqlalchemy
+mysqlclient

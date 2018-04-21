@@ -15,7 +15,7 @@ paths:
   /wechat/login:
     post:
       tags:
-        - wechat
+        - login
       summary: 微信登录授权
       parameters:
         - in: body
@@ -52,7 +52,7 @@ paths:
   /account/login:
     post:
       tags:
-        - account
+        - login
       summary: 员工登录
       security:
         - APISessionHeader: []
@@ -70,14 +70,18 @@ paths:
         '204':
           description: 登录成功
         '400':
-          description: 登录失败 
+          description: 登录失败
           schema:
             $ref: "#/definitions/Error"
+        '401':
+          description: 未登录 
   /home:
     get:
       tags:
-        - home
+        - yuqing
       summary: 监控中心
+      security:
+        - APISessionHeader: []
       produces:
         - application/json
       responses:
@@ -117,11 +121,19 @@ paths:
                       type: string
                     is_read:
                       type: integer
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   /articles:
     get:
       tags:
-        - articlelist
+        - yuqing
       summary: 舆情列表
+      security:
+        - APISessionHeader: []
       parameters:
         - in: query
           name: page_index
@@ -158,11 +170,19 @@ paths:
                       type: string
                     is_read:
                       type: integer
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   '/article/{id}':
     get:
       tags:
-        - articledetails
+        - yuqing
       summary: 舆情详情
+      security:
+        - APISessionHeader: []
       parameters:
         - in: path
           name: id
@@ -189,11 +209,19 @@ paths:
                 type: string
               content:
                 type: string
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   '/article/{id}/invalid':
     put:
       tags:
-        - Invalidinformation
+        - yuqing
       summary: 无效信息
+      security:
+        - APISessionHeader: []
       parameters:
         - in: path
           name: id
@@ -207,11 +235,19 @@ paths:
           description: 失败
           schema:
             $ref: "#/definitions/Error"
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   /search:
     get:
       tags:
         - search
       summary: 搜索提示
+      security:
+        - APISessionHeader: []
       parameters:
         - in: query
           name: key
@@ -249,17 +285,27 @@ paths:
                     children_count:
                       type: integer
                     children:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        industry_name:
-                          type: string
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          industry_name:
+                            type: string
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   /follows:
     get:
       tags:
-        - attentionlist
+        - follow
       summary: 关注列表
+      security:
+        - APISessionHeader: []
       produces:
         - application/json
       responses:
@@ -290,11 +336,19 @@ paths:
                       type: string
                     children_count:
                       type: integer
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   /follow:
     delete:
       tags:
-        - deletefollow
+        - follow
       summary: 删除关注
+      security:
+        - APISessionHeader: []
       parameters:
         - in: body
           name: deletefollow
@@ -315,10 +369,18 @@ paths:
           description: 删除失败
           schema:
             $ref: "#/definitions/Error"
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
     post:
       tags:
         - follow
       summary: 对已有公司或行业关注
+      security:
+        - APISessionHeader: []
       parameters:
         - in: body
           name: follow
@@ -339,11 +401,19 @@ paths:
           description: 关注失败
           schema:
             $ref: "#/definitions/Error"
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
   /newfollow:
     post:
       tags:
-        - newfollow
+        - follow
       summary: 新的关注
+      security:
+        - APISessionHeader: []
       parameters:
         - in: body
           name: newfollow
@@ -361,6 +431,12 @@ paths:
           description: 关注失败 
           schema:
             $ref: "#/definitions/Error"
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
+        '500':
+          description: 服务器异常
 
 definitions:
   Error:

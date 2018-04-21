@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 
 from sqlalchemy.ext.declarative import declarative_base  #描述表结构
-from sqlalchemy import Column, String, Integer,BigInteger,DATETIME,SmallInteger
+from sqlalchemy import Column, String, Integer,BigInteger,DATETIME,SmallInteger,Text
 
 from sqlalchemy.orm import sessionmaker,relationship  #与mysql建立会话
 from sqlalchemy import ForeignKey       #表建立关系
 
-engine = create_engine('mysql+mysqldb://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing?charset=utf8')
+
 Base = declarative_base()
 
 class employee(Base):
@@ -36,6 +36,9 @@ class  company(Base):
     id = Column('id',BigInteger, primary_key=True,index=True)
     company_name = Column('company_name',String(256), nullable=False)
     short_name = Column('short_name',String(128),nullable=False)
+    is_chinaipo = Column('is_chinaipo',SmallInteger,nullable=False)
+    url = Column('url',String(128),nullable=False)
+    stock_id = Column('stock_id',String(10))
     compayarticle = relationship('company_article', backref='compayarticle')
     companyfollow = relationship('follow_company', backref='companyfollow')
     companyindustry =  relationship('industry_company', backref='companyindustry')
@@ -95,8 +98,33 @@ class  session(Base):
     session_key = Column('session_key',String(256),nullable=False)
     random = Column('random',Integer,nullable=False)
 
+class article(Base):
+    __tablename__ = 'article'
+    id = Column('id',BigInteger, primary_key=True,index=True)
+    title = Column('title',String(256),nullable=False)
+    thumb_img = Column('thumb_img',String(256))
+    url = Column('url',String(512),nullable=False)
+    description = Column('description',Text)
+    publish_time = Column('publish_time',DATETIME,nullable=False)
+    text = Column('text',Text,nullable=False)
+    create_time = Column('create_time',DATETIME,nullable=False)
+    source_site = Column('source_site',String(128),nullable=False)
+    body = Column('body',Text,nullable=False)
+
+class employee_article(Base):
+    __tablename__ = 'employee_article'
+    employee_id = Column('employee_id',Integer, primary_key=True,index=True)
+    article_id = Column('article_id',BigInteger, primary_key=True,index=True)
+    is_read = Column('is_read',SmallInteger,nullable=False)
+    is_invalid = Column('is_invalid',SmallInteger,nullable=False)
+    is_send = Column('is_send',SmallInteger,nullable=False)
+    send_time = Column('send_time',DATETIME)
+
+
 def _connectDBdata_():
-    Base.metadata.create_all(engine) ###数据库连接
+    #数据库连接
+    engine = create_engine('mysql+mysqldb://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing?charset=utf8')
+    Base.metadata.create_all(engine) 
     Session = sessionmaker(bind=engine)
     dbsession = Session()
     return dbsession
