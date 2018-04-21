@@ -6,6 +6,7 @@ from .. import schemas
 
 from sqlalchemy import and_
 from core.PackageDB import employee, article, company, employee_article, company_article, follow_company, industry_article, _connectDBdata_
+from core.webconfig import alicdnserver
 import json
 
 
@@ -25,7 +26,8 @@ class Home(ApiHandler):
             employee.id == user.employee.id).one()
         var_employ = {}
         var_employ['realname'] = dbemployee[0]
-        var_employ['picture'] = dbemployee[1]
+        var_employ['picture'] = alicdnserver+dbemployee[1]
+        print(var_employ['picture'])
         respone['employee'] = var_employ
 
         # 新增公司舆情数
