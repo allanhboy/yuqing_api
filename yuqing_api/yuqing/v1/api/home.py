@@ -40,7 +40,7 @@ class Home(ApiHandler):
 
         # 公司第一页舆情列表
         var_articles = []
-        for row in dbsession.query(article.id, article.title, company.short_name, article.publish_time, employee_article.is_read).join(employee_article, article.id == employee_article.article_id).join(follow_company, follow_company.employee_id == employee_article.employee_id).join(company, follow_company.company_id == company.id).filter(and_(follow_company.employee_id == user.employee.id), follow_company.is_follow == 1).order_by(employee_article.send_time.desc()).limit(20):
+        for row in dbsession.query(article.id, article.title, company.company_name, article.publish_time, employee_article.is_read).join(employee_article, article.id == employee_article.article_id).join(company_article, employee_article.article_id == company_article.article_id).join(follow_company, follow_company.employee_id == user.employee.id).join(company, follow_company.company_id == company.id).filter(follow_company.is_follow == 1).order_by(employee_article.send_time.desc()).limit(20):dbsession.query(article.id, article.title, company.company_name, article.publish_time, employee_article.is_read).join(employee_article, article.id == employee_article.article_id).join(company_article, employee_article.article_id == company_article.article_id).join(follow_company, follow_company.employee_id == user.employee.id).join(company, follow_company.company_id == company.id).filter(follow_company.is_follow == 1).order_by(employee_article.send_time.desc()).limit(20):
             var_article = {}
             var_article['id'] = row[0]
             var_article['title'] = row[1]
