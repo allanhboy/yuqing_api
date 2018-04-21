@@ -44,7 +44,7 @@ class Home(ApiHandler):
             var_article['title'] = row[1]
             var_article['follow_type'] = 1
             var_article['follow_name'] = row[2]
-            var_article['time'] = row[3]
+            var_article['time'] = row[3].strftime('%Y-%m-%d %H:%M:%S')
             var_article['is_read'] = row[4]
             var_articles.append(var_article)
         respone['articles'] = var_articles
