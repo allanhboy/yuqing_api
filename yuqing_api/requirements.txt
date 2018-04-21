@@ -3,4 +3,4 @@ jsonschema
 six
 werkzeug
 sqlalchemy
-mysqlclient
+pymysql

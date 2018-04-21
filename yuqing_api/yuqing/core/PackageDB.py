@@ -123,7 +123,7 @@ class employee_article(Base):
 
 def _connectDBdata_():
     #数据库连接
-    engine = create_engine('mysql+mysqldb://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing?charset=utf8')
+    engine = create_engine('mysql+pymysql://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing?charset=utf8')
     Base.metadata.create_all(engine) 
     Session = sessionmaker(bind=engine)
     dbsession = Session()
