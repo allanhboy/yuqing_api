@@ -5,7 +5,7 @@ from . import ApiHandler
 from .. import schemas
 
 from sqlalchemy import and_
-from core.PackageDB import employee, article, company, employee_article, company_article, follow_company, industry_article, _connectDBdata_
+from core.PackageDB import employee, article, company, employee_article, company_article, follow_company, industry_article,follow_industry, _connectDBdata_
 from core.webconfig import alicdnserver
 import json
 
