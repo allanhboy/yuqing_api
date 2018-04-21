@@ -24,32 +24,36 @@ class WechatLogin(ApiHandler):
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req) as response:
             the_page = response.read()
-        the_page_utf_8 = the_page
+        the_page_utf_8 = the_page.decode('utf-8')
+        print(the_page_utf_8)
         weixininfo = json.loads(the_page_utf_8)
+        if weixininfo.get('openid') is None:
+           return {'code':400,'message':'code 无效'},400,None
+
         session_key = weixininfo['session_key']
         openid = weixininfo['openid']
 
-        #微信信息插入session表
+        # #微信信息插入session表
         respone = {}
         id = uuid.uuid1()
         expiretime=datetime.now()+timedelta(days=7)
-        sessioninfo = session(id=id,openid=openid,session_key=session_key,random=random,expire_time=expiretime)
+        sessioninfo = session(id=str(id),openid=openid,session_key=session_key,random=random,expire_time=expiretime)
         dbsession.add(sessioninfo)
         dbsession.commit()
         respone['session'] = sessioninfo.id
-        respone['expire_time'] = sessioninfo.expire_time.strftime('%Y-%m-%d %H:%M:%S') 
+        respone['expire_time'] = sessioninfo.expire_time.strftime('%Y-%m-%d %H:%M:%S')
 
         #判断employee是否绑定openid,绑定给session的employee赋值
         dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).first()
-        if dbemployeeid:
+        if dbemployeeid:       
             dbsessioninfo = dbsession.query(session).filter_by(openid=openid).order_by(session.create_time.desc()).first()
-            dbsessioninfo.employee_id = dbemployeeid
+            dbsessioninfo.employee_id = dbemployeeid[0]
             dbsession.add(dbsessioninfo)
             dbsession.commit()
             respone['is_binding'] = 1
             dbsession.close()
-            return respone, 200, None
+            return respone,200, None
         else:
             respone['is_binding'] = 0
             dbsession.close()
-            return respone, 400, None
+            return respone, 200, None

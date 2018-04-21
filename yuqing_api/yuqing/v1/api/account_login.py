@@ -45,13 +45,13 @@ class AccountLogin(ApiHandler):
                             return  None, 204, None
                         else:
                             dbsession.close()
-                            return  {"code":0,"message":"账号已绑定其他微信"}, 400, None
+                            return  {"code":400,"message":"账号已绑定其他微信"}, 400, None
                 else:
                     dbsession.close()
-                    return  {"code":0,"message":"密码错误"}, 400, None
+                    return  {"code":400,"message":"密码错误"}, 400, None
             else:
                 dbsession.close()
-                return  {"code":0,"message":"账号不存在"}, 400, None
+                return  {"code":400,"message":"账号不存在"}, 400, None
         else:
             dbsession.close()
-            return  {"code":0,"message":"请输入账号或者密码"}, 400, None
+            return  {"code":400,"message":"请输入账号或者密码"}, 400, None
