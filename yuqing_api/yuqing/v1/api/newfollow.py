@@ -27,7 +27,8 @@ class Newfollow(ApiHandler):
         if dbcompanyinfo is None:
             dbcompanyinfo = company(company_name = company_name,short_name = short_name,is_chinaipo = 0,url = '')
             dbsession.add(dbcompanyinfo)
-            
+            dbsession.commit()
+
             dbfollowcompany = follow_company(employee_id = user.employee.id,company_id = dbcompanyinfo.id)
             dbsession.add(dbfollowcompany)
 
@@ -55,7 +56,7 @@ class Newfollow(ApiHandler):
                 dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id ).one()
                 dbemployeefollow.company_count = dbemployeefollow.company_count+1
                 dbsession.add(dbemployeefollow)
-        #操作员工关注文章
+        操作员工关注文章
         faker_employee_article = []
         for row in dbsession.query(company_article.article_id).filter(company_article.company_id == dbcompanyinfo.company_id).all():
             dbemployeearticleinfo = dbsession.query(employee_article).filter(employee_article.article_id == row[0]).one_or_none()
