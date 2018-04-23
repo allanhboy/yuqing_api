@@ -17,15 +17,15 @@ class Search(ApiHandler):
         key = self.args['key']
         follow_type = self.args['follow_type']
         dbsession =_connectDBdata_()
-        i=0
         infoarray =[]
+        #return {'follows':[{'id': 1, 'follow_type': 1, 'company_name':'11', 'short_name': '11'},{'id': 1, 'follow_type': 2, 'industry_name': '', 'children_count':0}]},200,None
         if follow_type == 1:
             #公司的信息
             for row in dbsession.query(company.id,company.company_name,company.short_name).filter(company.company_name.like('%'+key+'%' )).all():
                 infodic ={}
                 infodic['id']=row[0]
                 infodic['company_name'] = row[1]
-                infodic['short_name)'] = row[2]
+                infodic['short_name'] = row[2]
                 infodic['follow_type']=1
                 infoarray.append(infodic)
             respone={'follows':infoarray}
@@ -37,7 +37,7 @@ class Search(ApiHandler):
                 infodic ={}
                 infodic['id']=row[0]
                 infodic['industry_name'] =row[1]
-                infodic['children_count)'] = row[2]
+                infodic['children_count'] = row[2]
                 infodic['follow_type']=2
                 children = []
                 #子行业信息
