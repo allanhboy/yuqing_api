@@ -437,6 +437,28 @@ paths:
           description: 未绑定
         '500':
           description: 服务器异常
+  /follow/state:
+    get:
+      tags:
+       - follow
+      summary: 关注数
+      security:
+       - APISessionHeader: []
+      responses:
+        200:
+          description: ok
+          schema:
+            type: object
+            properties:
+              company:
+                type: integer
+              industry:
+                type: integer
+          
+        '401':
+          description: 未登录
+        '403':
+          description: 未绑定
 
 definitions:
   Error:
