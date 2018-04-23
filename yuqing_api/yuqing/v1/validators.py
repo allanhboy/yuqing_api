@@ -52,7 +52,7 @@ class ValidatorAdaptor(object):
             'boolean': lambda v: v[0].lower() not in ['n', 'no', 'false', '', '0'],
             'null': lambda v: None,
             'number': lambda v: self.validate_number(float, v[0]),
-            'string': lambda v: v[0].decode('utf-8')
+            'string': lambda v: v[0]##.decode('utf-8')
         }
 
         def convert_array(type_, v):
