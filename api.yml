@@ -251,7 +251,7 @@ paths:
       parameters:
         - in: query
           name: key
-          type: integer
+          type: string
         - in: query
           name: follow_type
           type: integer
