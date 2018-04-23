@@ -1,0 +1,12 @@
+yuqing-api:
+  image: 'registry-vpc.cn-hangzhou.aliyuncs.com/syzb/yuqing_api:latest'
+  restart: always
+  environment:
+    - LANG=C.UTF-8
+    - GPG_KEY=0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
+    - 'MYSQL_CONNECTIONSTRING=mysql+pymysql://root:djejeUJ3qj^su22@mysqlserver:3306/yuqing?charset=utf8'
+  expose:
+    - 5000/tcp
+  labels:
+    aliyun.scale: '1'
+    aliyun.routing.port_5000: 'https://yuqing.api.qianjifang.com.cn'
