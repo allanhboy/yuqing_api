@@ -26,7 +26,6 @@ class WechatLogin(ApiHandler):
         with urllib.request.urlopen(req) as response:
             the_page = response.read()
         the_page_utf_8 = the_page.decode('utf-8')
-        print(the_page_utf_8)
         weixininfo = json.loads(the_page_utf_8)
         if weixininfo.get('openid') is None:
            return {'code':400,'message':'code 无效'},400,None
@@ -50,12 +49,10 @@ class WechatLogin(ApiHandler):
             dbsession.commit()
             respone['is_binding'] = 1
             dbsession.close()
-            print(respone)
             return respone,200, None
         else:
             respone['is_binding'] = 0
             dbsession.add(sessioninfo)
             dbsession.commit()
             dbsession.close()
-            print(respone)
             return respone, 200, None

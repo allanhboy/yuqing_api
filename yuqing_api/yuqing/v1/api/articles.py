@@ -22,7 +22,6 @@ class Articles(ApiHandler):
         if 'key' in self.args:
             key = self.args['key'].strip() 
             
-        print(key)
         page_size = 20
         dbsession = _connectDBdata_()
         #文章信息获取
