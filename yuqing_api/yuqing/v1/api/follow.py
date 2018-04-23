@@ -56,10 +56,10 @@ class Follow(ApiHandler):
                 dbsession.add(dbindustryinfo)
             else:
             #第一次关注    
-                dbindustryinfo = follow_company(employee_id=user.employee.id,industry_id= id)
+                dbindustryinfo = follow_industry(employee_id=user.employee.id,industry_id= id)
                 dbsession.add(dbindustryinfo)
             dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-            dbemployeefollow.industry_count = dbemployeefollow.instury_count+1
+            dbemployeefollow.industry_count = dbemployeefollow.industry_count+1
             dbsession.add(dbemployeefollow)
 
             #员工关注文章
@@ -102,7 +102,7 @@ class Follow(ApiHandler):
             dbindustryinfo.unfollow_time = datetime.now()
             dbsession.add(dbindustryinfo)
             dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-            dbemployeefollow.industry_count = dbemployeefollow.instury_count-1
+            dbemployeefollow.industry_count = dbemployeefollow.industry_count-1
             dbsession.add(dbemployeefollow)
             dbsession.commit()
         dbsession.close()
