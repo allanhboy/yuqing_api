@@ -29,11 +29,6 @@ class ValidatorAdaptor(object):
             return type_(value)
         except ValueError:
             return value
-    def validate_string(self, value):
-        if isinstance(value, bytes):
-            return value.decode('utf-8')
-        else:
-            return str(value)
 
     def type_convert(self, obj):
         if obj is None or not obj:
@@ -57,7 +52,7 @@ class ValidatorAdaptor(object):
             'boolean': lambda v: v[0].lower() not in ['n', 'no', 'false', '', '0'],
             'null': lambda v: None,
             'number': lambda v: self.validate_number(float, v[0]),
-            'string': lambda v:  self.validate_string(v[0])
+            'string': lambda v:  v[0] if isinstance(v[0], bytes) else v[0].decode('utf-8')
         }
 
         def convert_array(type_, v):
