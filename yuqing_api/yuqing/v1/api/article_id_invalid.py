@@ -19,7 +19,7 @@ class ArticleIdInvalid(ApiHandler):
         dbsession =_connectDBdata_()
         dbemployeearticleinfo = dbsession.query(employee_article).filter(and_(employee_article.employee_id == user.employee.id,employee_article.article_id == id)).one_or_none()
         if dbemployeearticleinfo:
-            dbemployeearticleinfo.is_invalid = 0
+            dbemployeearticleinfo.is_invalid = 1
             dbsession.add(dbemployeearticleinfo)
             dbsession.commit()
             dbsession.close()
