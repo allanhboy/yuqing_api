@@ -152,7 +152,7 @@ def _connectDBdata_():
     # 数据库连接
     env_dist = os.environ
     connect_str = env_dist.get(
-        'MYSQL_CONNECTIONSTRING', 'mysql+pymysql://root:addie5kaiK3@192.168.1.111:3306/yuqing?charset=utf8')
+        'MYSQL_CONNECTIONSTRING', 'mysql+pymysql://root:123456@localhost:3307/yuqing?charset=utf8')
     engine = create_engine(connect_str)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
