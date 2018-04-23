@@ -44,7 +44,7 @@ class Search(ApiHandler):
                 for  childrenrow in dbsession.query(industry.id,industry.industry_name).filter(industry.parent_id == row[0]).all():
                     childrendic = {}
                     childrendic['id'] = childrenrow[0]
-                    childrendic['industry_name'] = childrenrow[0]
+                    childrendic['industry_name'] = childrenrow[1]
                     children.append(childrendic)
                 infodic['children'] = children
                 infoarray.append(infodic)
