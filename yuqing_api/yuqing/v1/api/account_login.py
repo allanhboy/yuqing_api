@@ -42,6 +42,8 @@ class AccountLogin(ApiHandler):
                             dbemployee.session_key =user.session.session_key
                             dbemployee.openid = user.session.openid
                             dbsession.add(dbemployee)
+                            user.session.employee_id = dbemployee.id
+                            dbsession.add(user.session)
                             dbsession.commit()
                             dbsession.close()
                             return  None, 204, None
