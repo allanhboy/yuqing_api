@@ -33,7 +33,7 @@ class Articles(ApiHandler):
                 .join(follow_company, follow_company.company_id == company_article.company_id)\
                 .join(company, company.id == company_article.company_id)\
                 .join(employee_article, employee_article.article_id == article.id)\
-                .filter(and_(follow_company.is_follow == follow_type, employee_article.is_invalid == 0,follow_company.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))
+                .filter(and_(follow_company.is_follow == 1, employee_article.is_invalid == 0,follow_company.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))
             if len(key) :
                 dbcompanyarticle= dbcompanyarticle.filter(company.company_name == key)
             dbcompanyarticle=dbcompanyarticle.order_by(article.publish_time.desc()).slice((page_index - 1) * page_size, page_index * page_size)
@@ -53,7 +53,7 @@ class Articles(ApiHandler):
                 .join(follow_industry, follow_industry.industry_id == industry_article.industry_id)\
                 .join(industry, industry.id == industry_article.industry_id)\
                 .join(employee_article, employee_article.article_id == article.id)\
-                .filter(and_(follow_industry.is_follow == follow_type, employee_article.is_invalid == 0,follow_industry.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))
+                .filter(and_(follow_industry.is_follow == 1, employee_article.is_invalid == 0,follow_industry.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))
             if len(key) :
                 dbindustryarticle= dbindustryarticle.filter(industry.industry_name == key)
             dbindustryarticle=dbindustryarticle.order_by(article.publish_time.desc()).slice((page_index - 1) * page_size, page_index * page_size)
