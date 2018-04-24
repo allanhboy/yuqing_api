@@ -19,7 +19,7 @@ class AccountLogin(ApiHandler):
         password = self.json['password']
         #判断账户密码是否输入
         if username and password:
-            dbemployee=dbsession.query(employee).filter_by(username=username).first()
+            dbemployee=dbsession.query(employee).filter_by(username=username).one_or_none()
             #判断账号是否存在
             if dbemployee.password:
                 passwordmd5 = hashlib.md5()   
@@ -31,6 +31,8 @@ class AccountLogin(ApiHandler):
                         dbemployee.session_key =user.session.session_key
                         dbemployee.openid = user.session.openid
                         dbsession.add(dbemployee)
+                        user.session.employee_id = dbemployee.id
+                        dbsession.add(user.session)
                         dbsession.commit()
                         dbsession.close()
                         return  None, 204, None
@@ -44,7 +46,6 @@ class AccountLogin(ApiHandler):
                             dbsession.close()
                             return  None, 204, None
                         else:
-                            print('1111')
                             dbsession.close()
                             return  {"code":400,"message":"账号已绑定其他微信"}, 400, None
                 else:
