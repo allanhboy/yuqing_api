@@ -25,7 +25,7 @@ class AccountLogin(ApiHandler):
                 passwordmd5 = hashlib.md5()   
                 passwordmd5.update(password.encode(encoding='utf-8'))
                 #判断密码正确性
-                if dbemployee.password == passwordmd5.hexdigest():
+                if dbemployee.password == passwordmd5.hexdigest().upper():
                     #判断employee是否已绑定openid
                     if dbemployee.openid is None:
                         dbemployee.session_key =user.session.session_key
