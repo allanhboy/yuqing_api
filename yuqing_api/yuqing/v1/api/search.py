@@ -19,14 +19,11 @@ class Search(ApiHandler):
         follow_type = self.args['follow_type']
         searchtype = ''
         if 'type' in self.args:
-            searchtype = self.args['type'].strip() 
+            type = self.args['type']
         dbsession =_connectDBdata_()
         infoarray =[]
         if follow_type == 1:
             #公司的信息
-            # dbcompanyinfo=dbsession.query(company.id,company.company_name,company.short_name)\
-            #     .join(follow_company,follow_company.company_id == company.id)\
-            #     .filter(company.company_name.like('%'+key+'%' ),follow_company.employee_id == user.employee.id).all()
             dbcompanyinfo=dbsession.query(company.id,company.company_name,company.short_name)\
                 .filter(company.company_name.like('%'+key+'%' ))
             if searchtype == 1:
@@ -45,10 +42,13 @@ class Search(ApiHandler):
             return respone, 200, None
         else:
             #行业信息
-            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count)\
-                .join(follow_industry,follow_industry.industry_id == industry.id)\
-                .filter(industry.industry_name\
-                .like('%'+key+'%' )).all():
+            dbindustryinfo=dbsession.query(industry.id,industry.industry_name,industry.children_count)\
+                .filter(industry.industry_name.like('%'+key+'%' ))
+            if searchtype == 1:
+                dbindustryinfo=dbindustryinfo.join(follow_industry,follow_industry.industry_id == industry.id)
+                dbindustryinfo=dbindustryinfo.filter(follow_industry.employee_id == user.employee.id)              
+            dbindustryinfo=dbindustryinfo.all()
+            for row in dbindustryinfo:
                 infodic ={}
                 infodic['id']=row[0]
                 infodic['industry_name'] =row[1]
