@@ -17,16 +17,16 @@ class Search(ApiHandler):
             return None ,403,None
         key = self.args['key']
         follow_type = self.args['follow_type']
-        searchtype = ''
+        searchtype = 0
         if 'type' in self.args:
-            type = self.args['type']
+            searchtype = self.args['type']
         dbsession =_connectDBdata_()
         infoarray =[]
         if follow_type == 1:
             #公司的信息
             dbcompanyinfo=dbsession.query(company.id,company.company_name,company.short_name)\
                 .filter(company.company_name.like('%'+key+'%' ))
-            if searchtype == 1:
+            if searchtype > 0:
                 dbcompanyinfo=dbcompanyinfo.join(follow_company,follow_company.company_id == company.id)
                 dbcompanyinfo=dbcompanyinfo.filter(follow_company.employee_id == user.employee.id)              
             dbcompanyinfo=dbcompanyinfo.all()
@@ -44,7 +44,7 @@ class Search(ApiHandler):
             #行业信息
             dbindustryinfo=dbsession.query(industry.id,industry.industry_name,industry.children_count)\
                 .filter(industry.industry_name.like('%'+key+'%' ))
-            if searchtype == 1:
+            if searchtype > 0:
                 dbindustryinfo=dbindustryinfo.join(follow_industry,follow_industry.industry_id == industry.id)
                 dbindustryinfo=dbindustryinfo.filter(follow_industry.employee_id == user.employee.id)              
             dbindustryinfo=dbindustryinfo.all()
