@@ -258,6 +258,9 @@ paths:
           enum:
             - 1
             - 2
+        - in: query
+          name: type
+          type: integer
       responses:
         '200':
           description: OK
