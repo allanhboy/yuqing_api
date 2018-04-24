@@ -28,7 +28,7 @@ class Search(ApiHandler):
                 .filter(company.company_name.like('%'+key+'%' ))
             if searchtype > 0:
                 dbcompanyinfo=dbcompanyinfo.join(follow_company,follow_company.company_id == company.id)
-                dbcompanyinfo=dbcompanyinfo.filter(follow_company.employee_id == user.employee.id)              
+                dbcompanyinfo=dbcompanyinfo.filter(follow_company.employee_id == user.employee.id,follow_industry.is_follow == 1)              
             dbcompanyinfo=dbcompanyinfo.all()
             for row in dbcompanyinfo:
                 infodic ={}
@@ -46,7 +46,7 @@ class Search(ApiHandler):
                 .filter(industry.industry_name.like('%'+key+'%' ))
             if searchtype > 0:
                 dbindustryinfo=dbindustryinfo.join(follow_industry,follow_industry.industry_id == industry.id)
-                dbindustryinfo=dbindustryinfo.filter(follow_industry.employee_id == user.employee.id)              
+                dbindustryinfo=dbindustryinfo.filter(follow_industry.employee_id == user.employee.id,follow_industry.is_follow == 1)              
             dbindustryinfo=dbindustryinfo.all()
             for row in dbindustryinfo:
                 infodic ={}
@@ -56,7 +56,15 @@ class Search(ApiHandler):
                 infodic['follow_type']=2
                 children = []
                 #子行业信息
-                for  childrenrow in dbsession.query(industry.id,industry.industry_name).filter(industry.parent_id == row[0]).all():
+
+                dbchildrenindustryinfo = dbsession.query(industry.id,industry.industry_name).filter(industry.parent_id == row[0])
+                if searchtype > 0:
+                    dbchildrenindustryinfo=dbchildrenindustryinfo.join(follow_industry,follow_industry.industry_id == industry.id)
+                    dbchildrenindustryinfo=dbchildrenindustryinfo.filter(follow_industry.employee_id == user.employee.id,follow_industry.is_follow == 1)
+                dbchildrenindustryinfo=dbchildrenindustryinfo.all()
+                print(dbchildrenindustryinfo)
+                print(user.employee.id)
+                for  childrenrow in dbchildrenindustryinfo:
                     childrendic = {}
                     childrendic['id'] = childrenrow[0]
                     childrendic['industry_name'] = childrenrow[1]
