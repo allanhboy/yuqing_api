@@ -12,7 +12,7 @@ class FollowState(ApiHandler):
         user = self.get_current_user()
         if not user.valid:
             return None ,401,None
-        if user.employee.id is None:
+        if user.session.employee_id is None:
             return None ,403,None
         dbsession = _connectDBdata_()
         dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()

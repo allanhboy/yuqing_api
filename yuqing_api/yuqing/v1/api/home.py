@@ -16,7 +16,7 @@ class Home(ApiHandler):
         user = self.get_current_user()
         if not user.valid:
             return None ,401,None
-        if user.employee.id is None:
+        if user.session.employee_id is None:
             return None ,403,None
         respone = {}
         dbsession = _connectDBdata_()
@@ -27,7 +27,6 @@ class Home(ApiHandler):
         var_employ = {}
         var_employ['realname'] = dbemployee[0]
         var_employ['picture'] = alicdnserver+dbemployee[1]
-        print(var_employ['picture'])
         respone['employee'] = var_employ
 
         # 新增公司舆情数

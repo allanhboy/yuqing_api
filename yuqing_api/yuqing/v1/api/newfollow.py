@@ -15,7 +15,7 @@ class Newfollow(ApiHandler):
         user = self.get_current_user()
         if not user.valid:
             return None ,401,None
-        if user.employee.id is None:
+        if user.session.employee_id is None:
             return None ,403,None
             
         company_name = self.json['company_name']
