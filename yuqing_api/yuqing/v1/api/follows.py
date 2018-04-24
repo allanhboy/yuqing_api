@@ -35,7 +35,7 @@ class Follows(ApiHandler):
         #行业关注信息
         if dbfollow.industry_count >0:
             industryinfoarray = []
-            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_company.follow_time.desc()).all():
+            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_industry.follow_time.desc()).all():
                 industryinfodic = {}
                 industryinfodic['id']=row[0]
                 industryinfodic['industry_name'] = row[1]
