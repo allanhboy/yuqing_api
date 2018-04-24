@@ -36,10 +36,8 @@ class Newfollow(ApiHandler):
             dbemployeefollow.company_count = dbemployeefollow.company_count+1
             dbsession.add(dbemployeefollow)
         else:
-            dbfollowcompany = dbsession.query(follow_company).filter(follow_company.company_id == dbcompanyinfo.id).one_or_none()
+            dbfollowcompany = dbsession.query(follow_company).filter(follow_company.company_id == dbcompanyinfo.id,follow_company.employee_id == user.employee.id).one_or_none()
             if dbfollowcompany:
-                #公司已经存在，且有关注数据
-                print(dbfollowcompany.is_follow)
                 #公司已经存在，且已取消关注数据
                 if dbfollowcompany.is_follow == 0:
                     dbfollowcompany.is_follow = 1
