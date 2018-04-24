@@ -23,7 +23,7 @@ class Follows(ApiHandler):
         #公司关注信息
         if dbfollow.company_count > 0:
             companyinfoarray = []
-            for row in dbsession.query(company.id,company.company_name,company.short_name).join(follow_company,company.id==follow_company.company_id).filter(and_(follow_company.employee_id==user.employee.id),follow_company.is_follow==1).all().order_by(follow_company.follow_time.desc()):
+            for row in dbsession.query(company.id,company.company_name,company.short_name).join(follow_company,company.id==follow_company.company_id).filter(and_(follow_company.employee_id==user.employee.id),follow_company.is_follow==1).order_by(follow_company.follow_time.desc()).all():
                 companyinfodic = {}
                 companyinfodic['id']=row[0]
                 companyinfodic['company_name'] = row[1]
@@ -35,7 +35,7 @@ class Follows(ApiHandler):
         #行业关注信息
         if dbfollow.industry_count >0:
             industryinfoarray = []
-            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).all().order_by(follow_company.follow_time.desc()):
+            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_company.follow_time.desc()).all():
                 industryinfodic = {}
                 industryinfodic['id']=row[0]
                 industryinfodic['industry_name'] = row[1]
