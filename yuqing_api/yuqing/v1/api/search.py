@@ -4,7 +4,8 @@ from __future__ import absolute_import, print_function
 from . import ApiHandler
 from .. import schemas
 
-from core.PackageDB import company,industry,_connectDBdata_
+from core.PackageDB import company,industry,follow_company,follow_industry,_connectDBdata_
+from sqlalchemy import and_
 
 class Search(ApiHandler):
 
@@ -18,10 +19,11 @@ class Search(ApiHandler):
         follow_type = self.args['follow_type']
         dbsession =_connectDBdata_()
         infoarray =[]
-        #return {'follows':[{'id': 1, 'follow_type': 1, 'company_name':'11', 'short_name': '11'},{'id': 1, 'follow_type': 2, 'industry_name': '', 'children_count':0}]},200,None
         if follow_type == 1:
             #公司的信息
-            for row in dbsession.query(company.id,company.company_name,company.short_name).filter(company.company_name.like('%'+key+'%' )).all():
+            for row in dbsession.query(company.id,company.company_name,company.short_name)\
+                .join(follow_company,follow_company.company_id == company.id)\
+                .filter(company.company_name.like('%'+key+'%' ),follow_company.employee_id == user.employee.id).all():
                 infodic ={}
                 infodic['id']=row[0]
                 infodic['company_name'] = row[1]
@@ -33,7 +35,10 @@ class Search(ApiHandler):
             return respone, 200, None
         else:
             #行业信息
-            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).filter(industry.industry_name.like('%'+key+'%' )).all():
+            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count)\
+                .join(follow_industry,follow_industry.industry_id == industry.id)\
+                .filter(industry.industry_name\
+                .like('%'+key+'%' )).all():
                 infodic ={}
                 infodic['id']=row[0]
                 infodic['industry_name'] =row[1]
