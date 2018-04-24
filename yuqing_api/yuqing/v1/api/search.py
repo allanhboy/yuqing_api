@@ -62,8 +62,6 @@ class Search(ApiHandler):
                     dbchildrenindustryinfo=dbchildrenindustryinfo.join(follow_industry,follow_industry.industry_id == industry.id)
                     dbchildrenindustryinfo=dbchildrenindustryinfo.filter(follow_industry.employee_id == user.employee.id,follow_industry.is_follow == 1)
                 dbchildrenindustryinfo=dbchildrenindustryinfo.all()
-                print(dbchildrenindustryinfo)
-                print(user.employee.id)
                 for  childrenrow in dbchildrenindustryinfo:
                     childrendic = {}
                     childrendic['id'] = childrenrow[0]
