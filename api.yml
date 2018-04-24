@@ -170,6 +170,8 @@ paths:
                       type: string
                     is_read:
                       type: integer
+              count:
+                type: integer
         '401':
           description: 未登录
         '403':

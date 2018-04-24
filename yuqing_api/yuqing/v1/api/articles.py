@@ -36,6 +36,10 @@ class Articles(ApiHandler):
                 .filter(and_(follow_company.is_follow == 1, employee_article.is_invalid == 0,follow_company.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))
             if len(key) :
                 dbcompanyarticle= dbcompanyarticle.filter(company.company_name == key)
+            
+            #计算数量
+            respone['count'] = dbcompanyarticle.count()
+
             dbcompanyarticle=dbcompanyarticle.order_by(article.publish_time.desc()).slice((page_index - 1) * page_size, page_index * page_size)
             for row in dbcompanyarticle:
                 articleinfodic = {}
@@ -45,7 +49,7 @@ class Articles(ApiHandler):
                 articleinfodic['follow_type'] = follow_type
                 articleinfodic['is_read'] = row[4]
                 articleinfodic['time'] = row[3].strftime('%Y/%m/%d %H:%M:%S')
-                articleinfoarray.append(articleinfodic)
+                articleinfoarray.append(articleinfodic) 
             respone['articles'] = articleinfoarray
         else:
             dbindustryarticle=dbsession.query(article.id, article.title, industry.industry_name, article.publish_time, employee_article.is_read)\
@@ -56,6 +60,10 @@ class Articles(ApiHandler):
                 .filter(and_(follow_industry.is_follow == 1, employee_article.is_invalid == 0,follow_industry.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))
             if len(key) :
                 dbindustryarticle= dbindustryarticle.filter(industry.industry_name == key)
+
+            #计算数量
+            respone['count'] = dbindustryarticle.count()
+
             dbindustryarticle=dbindustryarticle.order_by(article.publish_time.desc()).slice((page_index - 1) * page_size, page_index * page_size)
             for row in dbindustryarticle:
                 articleinfodic = {}
