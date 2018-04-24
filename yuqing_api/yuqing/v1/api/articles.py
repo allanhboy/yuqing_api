@@ -44,7 +44,7 @@ class Articles(ApiHandler):
                 articleinfodic['follow_name'] = row[2]
                 articleinfodic['follow_type'] = follow_type
                 articleinfodic['is_read'] = row[4]
-                articleinfodic['time'] = row[3].strftime('%Y-%m-%d %H:%M:%S')
+                articleinfodic['time'] = row[3].strftime('%Y/%m/%d %H:%M:%S')
                 articleinfoarray.append(articleinfodic)
             respone['articles'] = articleinfoarray
         else:
@@ -64,7 +64,7 @@ class Articles(ApiHandler):
                 articleinfodic['follow_name'] = row[2]
                 articleinfodic['follow_type'] = follow_type
                 articleinfodic['is_read'] = row[4]
-                articleinfodic['time'] = row[3].strftime('%Y-%m-%d %H:%M:%S')
+                articleinfodic['time'] = row[3].strftime('%Y/%m/%d %H:%M:%S')
                 articleinfoarray.append(articleinfodic)
             respone['articles'] = articleinfoarray
         dbsession.close()

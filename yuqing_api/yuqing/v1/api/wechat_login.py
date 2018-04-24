@@ -39,7 +39,7 @@ class WechatLogin(ApiHandler):
         expiretime=datetime.now()+timedelta(days=7)
         sessioninfo = session(id=str(id),openid=openid,session_key=session_key,random=random,expire_time=expiretime)
         respone['session'] = sessioninfo.id
-        respone['expire_time'] = sessioninfo.expire_time.strftime('%Y-%m-%d %H:%M:%S')
+        respone['expire_time'] = sessioninfo.expire_time.strftime('%Y/%m/%d %H:%M:%S')
 
         # #判断employee是否绑定openid,绑定给session的employee赋值
         dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).one_or_none()
