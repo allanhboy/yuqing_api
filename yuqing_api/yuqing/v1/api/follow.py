@@ -26,6 +26,8 @@ class Follow(ApiHandler):
             dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()
             #对已取消进行关注操作
             if dbcompanyinfo:
+                if dbcompanyinfo.is_follow == 1:
+                     return None, 204, None
                 dbcompanyinfo.is_follow = 1
                 dbcompanyinfo.follow_time = datetime.now()
                 dbsession.add(dbcompanyinfo)
@@ -51,6 +53,8 @@ class Follow(ApiHandler):
             dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
             #对已取消进行关注操作
             if dbindustryinfo:
+                if dbindustryinfo.is_follow == 1:
+                    return None, 204, None
                 dbindustryinfo.is_follow = 1
                 dbindustryinfo.follow_time = datetime.now()
                 dbsession.add(dbindustryinfo)
