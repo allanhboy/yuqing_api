@@ -122,6 +122,7 @@ class session(Base):
     expire_time = Column('expire_time', DATETIME, nullable=False)
     session_key = Column('session_key', String(256), nullable=False)
     random = Column('random', Integer, nullable=False)
+    unionid = Column('unionid',String(128),nullable=False)
 
 
 class article(Base):

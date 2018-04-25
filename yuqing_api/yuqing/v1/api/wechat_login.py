@@ -32,12 +32,13 @@ class WechatLogin(ApiHandler):
 
         session_key = weixininfo['session_key']
         openid = weixininfo['openid']
+        unionid = weixininfo['unionid']
 
         # #微信信息插入session表
         respone = {}
         id = uuid.uuid1()
         expiretime=datetime.now()+timedelta(days=7)
-        sessioninfo = session(id=str(id),openid=openid,session_key=session_key,random=random,expire_time=expiretime)
+        sessioninfo = session(id=str(id),openid=openid,session_key=session_key,random=random,expire_time=expiretime,unionid = unionid)
         respone['session'] = sessioninfo.id
         respone['expire_time'] = sessioninfo.expire_time.strftime('%Y/%m/%d %H:%M:%S')
 

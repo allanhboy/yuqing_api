@@ -30,6 +30,7 @@ class AccountLogin(ApiHandler):
                     if dbemployee.openid is None:
                         dbemployee.session_key =user.session.session_key
                         dbemployee.openid = user.session.openid
+                        dbemployee.unionid = user.session.unionid
                         dbsession.add(dbemployee)
                         user.session.employee_id = dbemployee.id
                         dbsession.add(user.session)
@@ -41,6 +42,7 @@ class AccountLogin(ApiHandler):
                         if dbemployee.openid == user.session.openid:
                             dbemployee.session_key =user.session.session_key
                             dbemployee.openid = user.session.openid
+                            dbemployee.unionid = user.session.unionid
                             dbsession.add(dbemployee)
                             user.session.employee_id = dbemployee.id
                             dbsession.add(user.session)
