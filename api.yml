@@ -341,6 +341,18 @@ paths:
                       type: string
                     children_count:
                       type: integer
+                    children_industry:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          industry_name:
+                            type: string
+                          children_count:
+                            type: integer
+        
         '401':
           description: 未登录
         '403':
