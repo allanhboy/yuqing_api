@@ -44,7 +44,7 @@ class Follows(ApiHandler):
                 industryinfodic = {}
                 industryinfodic['id']=row[0]
                 industryinfodic['industry_name'] = row[1]
-                industryinfodic['children_count)'] = row[2]
+                industryinfodic['children_count'] = row[2]
 
                 children = []
                 dbchildrenindustryinfo = dbsession.query(industry.id,industry.industry_name,industry.children_count).filter(industry.parent_id == row[0])\
