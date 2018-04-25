@@ -40,6 +40,18 @@ class Follows(ApiHandler):
                 industryinfodic['id']=row[0]
                 industryinfodic['industry_name'] = row[1]
                 industryinfodic['children_count)'] = row[2]
+
+                children = []
+                dbchildrenindustryinfo = dbsession.query(industry.id,industry.industry_name,industry.children_count).filter(industry.parent_id == row[0])\
+                    .join(follow_industry,follow_industry.industry_id == industry.id)\
+                    .filter(follow_industry.employee_id == user.employee.id,follow_industry.is_follow == 1)\
+                    .all()
+                for  childrenrow in dbchildrenindustryinfo:
+                    childrendic = {}
+                    childrendic['id'] = childrenrow[0]
+                    childrendic['industry_name'] = childrenrow[1]
+                    children.append(childrendic)
+                industryinfodic['children_industry'] = children
                 industryinfoarray.append(industryinfodic)
             respone['industry'] = industryinfoarray
         else:
