@@ -34,7 +34,7 @@ class Home(ApiHandler):
             .join(company_article, article.id == company_article.article_id)\
             .join(follow_company, follow_company.company_id == company_article.company_id)\
             .join(employee_article, employee_article.article_id == article.id)\
-            .filter(and_(follow_company.is_follow == 1, employee_article.is_invalid == 0,follow_company.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))\
+            .filter(and_(follow_company.is_follow == 1, employee_article.is_invalid == 0,follow_company.employee_id == user.employee.id,employee_article.employee_id==user.employee.id,employee_article.is_read == 0))\
             .count()
 
         # 新增行业舆情数
@@ -42,7 +42,7 @@ class Home(ApiHandler):
             .join(industry_article, article.id == industry_article.article_id)\
             .join(follow_industry, follow_industry.industry_id == industry_article.industry_id)\
             .join(employee_article, employee_article.article_id == article.id)\
-            .filter(and_(follow_industry.is_follow == 1, employee_article.is_invalid == 0,follow_industry.employee_id == user.employee.id,employee_article.employee_id==user.employee.id))\
+            .filter(and_(follow_industry.is_follow == 1, employee_article.is_invalid == 0,follow_industry.employee_id == user.employee.id,employee_article.employee_id==user.employee.id,employee_article.is_read == 0))\
             .count()
 
         # 公司第一页舆情列表
