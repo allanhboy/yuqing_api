@@ -52,34 +52,36 @@ class Follow(ApiHandler):
             dbsession.commit()
         #关注行业信息
         if follow_type == 2:
-            dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
-            #对已取消进行关注操作
-            if dbindustryinfo:
-                if dbindustryinfo.is_follow == 1:
-                    return None, 204, None
-                dbindustryinfo.is_follow = 1
-                dbindustryinfo.follow_time = datetime.now()
-                dbsession.add(dbindustryinfo)
-            else:
-            #第一次关注    
-                dbindustryinfo = follow_industry(employee_id=user.employee.id,industry_id= id)
-                dbsession.add(dbindustryinfo)
-            dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-            dbemployeefollow.industry_count = dbemployeefollow.industry_count+1
-            dbsession.add(dbemployeefollow)
+            
+            for row in dbsession.execute('select id from industry where FIND_IN_SET(id,getChildrenOrg({id}))'.format(id=id)).fetchall():
+                dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == row[0])).one_or_none()
+                #对已取消进行关注操作
+                if dbindustryinfo:
+                    if dbindustryinfo.is_follow == 1:
+                        return None, 204, None
+                    dbindustryinfo.is_follow = 1
+                    dbindustryinfo.follow_time = datetime.now()
+                    dbsession.add(dbindustryinfo)
+                else:
+                #第一次关注    
+                    dbindustryinfo = follow_industry(employee_id=user.employee.id,industry_id= row[0])
+                    dbsession.add(dbindustryinfo)
+                dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
+                dbemployeefollow.industry_count = dbemployeefollow.industry_count+1
+                dbsession.add(dbemployeefollow)
 
-            #员工关注文章
-            faker_employee_article = []
-            for row in dbsession.query(industry_article.article_id,article.publish_time).join(article,article.id == industry_article.article_id).filter(industry_article.industry_id == dbindustryinfo.industry_id).all():
-                dbemployeearticleinfo = dbsession.query(employee_article).filter(and_(employee_article.article_id == row[0],employee_article.employee_id == user.employee.id)).one_or_none()
-                if dbemployeearticleinfo is None:
-                    if row[1].strftime('%Y/%m/%d')>=datetime.now().strftime('%Y/%m/%d'):
-                        dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datetime.now())
-                    else:
-                        dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 1,is_invalid = 0,is_send=1,send_time = datetime.now())
-                    faker_employee_article.append(dbemployeearticleinfo)
-            dbsession.add_all(faker_employee_article)
-
+                #员工关注文章
+                faker_employee_article = []
+                for row in dbsession.query(industry_article.article_id,article.publish_time).join(article,article.id == industry_article.article_id).filter(industry_article.industry_id == dbindustryinfo.industry_id).all():
+                    dbemployeearticleinfo = dbsession.query(employee_article).filter(and_(employee_article.article_id == row[0],employee_article.employee_id == user.employee.id)).one_or_none()
+                    if dbemployeearticleinfo is None:
+                        if row[1].strftime('%Y/%m/%d')>=datetime.now().strftime('%Y/%m/%d'):
+                            dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datetime.now())
+                        else:
+                            dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 1,is_invalid = 0,is_send=1,send_time = datetime.now())
+                        faker_employee_article.append(dbemployeearticleinfo)
+                dbsession.add_all(faker_employee_article)
+                print(faker_employee_article)
             dbsession.commit()
         dbsession.close()
         return None, 204, None
@@ -106,13 +108,14 @@ class Follow(ApiHandler):
             dbsession.commit()
         #取消关注行业信息
         if follow_type == 2:
-            dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == id)).one_or_none()
-            dbindustryinfo.is_follow = 0
-            dbindustryinfo.unfollow_time = datetime.now()
-            dbsession.add(dbindustryinfo)
-            dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
-            dbemployeefollow.industry_count = dbemployeefollow.industry_count-1
-            dbsession.add(dbemployeefollow)
+            for row in dbsession.execute('select id from industry where FIND_IN_SET(id,getChildrenOrg({id}))'.format(id=id)).fetchall():
+                dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == row[0])).one_or_none()
+                dbindustryinfo.is_follow = 0
+                dbindustryinfo.unfollow_time = datetime.now()
+                dbsession.add(dbindustryinfo)
+                dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
+                dbemployeefollow.industry_count = dbemployeefollow.industry_count-1
+                dbsession.add(dbemployeefollow)
             dbsession.commit()
         dbsession.close()
         return None, 204, None
