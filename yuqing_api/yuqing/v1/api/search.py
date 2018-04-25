@@ -28,8 +28,9 @@ class Search(ApiHandler):
                 .filter(company.company_name.like('%'+key+'%' ))
             if searchtype > 0:
                 dbcompanyinfo=dbcompanyinfo.join(follow_company,follow_company.company_id == company.id)
-                dbcompanyinfo=dbcompanyinfo.filter(follow_company.employee_id == user.employee.id,follow_industry.is_follow == 1)              
+                dbcompanyinfo=dbcompanyinfo.filter(follow_company.employee_id == user.employee.id,follow_company.is_follow == 1)            
             dbcompanyinfo=dbcompanyinfo.all()
+
             for row in dbcompanyinfo:
                 infodic ={}
                 infodic['id']=row[0]
