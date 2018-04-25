@@ -35,32 +35,31 @@ class Follows(ApiHandler):
         #行业关注信息
         if dbfollow.industry_count >0:
             industryinfoarray = []
-            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count,industry.parent_id).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_industry.follow_time.desc()).all():
-                if row[3] is not None:
-                    dbparentinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id==user.employee.id,follow_industry.is_follow==1,follow_industry.industry_id == row[3])).one_or_none()
-                    if dbparentinfo is not None:
-                        print(row[0])
+            db = dbsession.query(industry).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_industry.follow_time.desc()).all()
+            for row in db:
+                if row.parent_id is not None:
+                    parents=[(t1) for t1 in db if t1.parent_id ==row.id]
+                    if len(parents):
                         continue
                 industryinfodic = {}
-                industryinfodic['id']=row[0]
-                industryinfodic['industry_name'] = row[1]
-                industryinfodic['children_count'] = row[2]
-
-                children = []
-                dbchildrenindustryinfo = dbsession.query(industry.id,industry.industry_name,industry.children_count).filter(industry.parent_id == row[0])\
-                    .join(follow_industry,follow_industry.industry_id == industry.id)\
-                    .filter(follow_industry.employee_id == user.employee.id,follow_industry.is_follow == 1)\
-                    .all()
-                for  childrenrow in dbchildrenindustryinfo:
-                    childrendic = {}
-                    childrendic['id'] = childrenrow[0]
-                    childrendic['industry_name'] = childrenrow[1]
-                    childrendic['children_count'] = childrenrow[2]
-                    children.append(childrendic)
-                industryinfodic['children_industry'] = children
+                industryinfodic['id']=row.id
+                industryinfodic['industry_name'] = row.industry_name
+                industryinfodic['children_count'] = row.children_count
+                industryinfodic['children_industry'] = factorial(row.id,db)
                 industryinfoarray.append(industryinfodic)
             respone['industry'] = industryinfoarray
         else:
             respone['industry'] = []
-        dbsession.close()
         return respone, 200, None
+
+def factorial(parent_id,db):
+    fatherindustry = []
+    curectchilddb=[(t1) for t1 in db if t1.parent_id ==parent_id]
+    for curectchilddbrow in curectchilddb:
+        childrendic = {}
+        childrendic['id'] = curectchilddbrow.id
+        childrendic['industry_name'] = curectchilddbrow.industry_name
+        childrendic['children_count'] = curectchilddbrow.children_count
+        childrendic['children_industry']=factorial(curectchilddbrow.id,db)
+        fatherindustry.append(childrendic)
+    return fatherindustry
