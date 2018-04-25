@@ -35,7 +35,12 @@ class Follows(ApiHandler):
         #行业关注信息
         if dbfollow.industry_count >0:
             industryinfoarray = []
-            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_industry.follow_time.desc()).all():
+            for row in dbsession.query(industry.id,industry.industry_name,industry.children_count,industry.parent_id).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_industry.follow_time.desc()).all():
+                if row[3] is not None:
+                    dbparentinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id==user.employee.id,follow_industry.is_follow==1,follow_industry.industry_id == row[3])).one_or_none()
+                    if dbparentinfo is not None:
+                        print(row[0])
+                        continue
                 industryinfodic = {}
                 industryinfodic['id']=row[0]
                 industryinfodic['industry_name'] = row[1]
@@ -50,6 +55,7 @@ class Follows(ApiHandler):
                     childrendic = {}
                     childrendic['id'] = childrenrow[0]
                     childrendic['industry_name'] = childrenrow[1]
+                    childrendic['children_count'] = childrenrow[2]
                     children.append(childrendic)
                 industryinfodic['children_industry'] = children
                 industryinfoarray.append(industryinfodic)

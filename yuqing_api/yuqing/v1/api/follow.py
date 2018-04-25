@@ -81,7 +81,6 @@ class Follow(ApiHandler):
                             dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 1,is_invalid = 0,is_send=1,send_time = datetime.now())
                         faker_employee_article.append(dbemployeearticleinfo)
                 dbsession.add_all(faker_employee_article)
-                print(faker_employee_article)
             dbsession.commit()
         dbsession.close()
         return None, 204, None
