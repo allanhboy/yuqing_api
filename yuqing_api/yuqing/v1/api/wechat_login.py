@@ -18,8 +18,8 @@ class WechatLogin(ApiHandler):
         dbsession.query(employee).all()
         code = self.json['code']
         random =  self.json['random']
-        appid = 'wx1154d8019b1db191'
-        appscred = '12d3e5086ac152c27e6d2cd30966b326'
+        appid = 'wx79edc80703771261'
+        appscred = '200b4a453f52b431c3863c03e53304fc'
         #获取微信opneid等信息
         url = 'https://api.weixin.qq.com/sns/jscode2session?appid={APPID}&secret={SECRET}&js_code={JSCODE}&grant_type=authorization_code'.format(APPID=appid,SECRET=appscred,JSCODE=code)
         req = urllib.request.Request(url)
