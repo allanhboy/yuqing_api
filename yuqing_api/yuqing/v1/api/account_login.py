@@ -14,11 +14,12 @@ class AccountLogin(ApiHandler):
         if not user.valid:
             return  {"code":0,"message":"未登录"}, 401, None
 
-        dbsession = _connectDBdata_()
+       
         username = self.json['username']
         password = self.json['password']
         #判断账户密码是否输入
         if username and password:
+            dbsession = _connectDBdata_()
             dbemployee=dbsession.query(employee).filter_by(username=username).one_or_none()
             #判断账号是否存在
             if dbemployee.password:
@@ -59,5 +60,4 @@ class AccountLogin(ApiHandler):
                 dbsession.close()
                 return  {"code":400,"message":"账号不存在"}, 400, None
         else:
-            dbsession.close()
             return  {"code":400,"message":"请输入账号或者密码"}, 400, None
