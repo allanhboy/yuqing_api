@@ -44,15 +44,13 @@ class WechatLogin(ApiHandler):
 
         # #判断employee是否绑定openid,绑定给session的employee赋值
         dbsession = _connectDBdata_()
-        dbemployeeid = dbsession.query(employee.id).filter_by(
-            openid=openid).one_or_none()
+        dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).one_or_none()
         if dbemployeeid:
             sessioninfo.employee_id = dbemployeeid[0]
             respone['is_binding'] = 1
         else:
-            dbsession.add(sessioninfo)
             respone['is_binding'] = 0
-
+        dbsession.add(sessioninfo)
         dbsession.commit()
         dbsession.close()
         return respone, 200, None
