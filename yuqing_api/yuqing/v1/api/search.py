@@ -43,13 +43,13 @@ class Search(ApiHandler):
             return respone, 200, None
         else:
             # 行业信息
-            dbindustryinfo = dbsession.query(industry).filter(industry.industry_name.like('%'+key+'%'))
+            dbindustryinfo = dbsession.query(industry)#.filter(industry.industry_name.like('%'+key+'%'))
             if searchtype > 0:
                 dbindustryinfo = dbindustryinfo.join(follow_industry, follow_industry.industry_id == industry.id)\
                     .filter(follow_industry.employee_id == user.employee.id, follow_industry.is_follow == 1)
             dbindustryinfo = dbindustryinfo.all()
             dbsession.close()
-            for row in dbindustryinfo:
+            for row in [t1 for t1 in dbindustryinfo if key in t1.industry_name]:
                 infodic = {}
                 infodic['id'] = row.id
                 infodic['industry_name'] = row.industry_name
@@ -57,7 +57,7 @@ class Search(ApiHandler):
                 infodic['follow_type'] = 2
 
                 children = []
-                for childrenrow in [childrenmodel for childrenmodel in dbindustryinfo if childrenmodel.parent_id ==row.id]:
+                for childrenrow in [t1 for t1 in dbindustryinfo if t1.parent_id == row.id]:
                     childrendic = {}
                     childrendic['id'] = childrenrow.id
                     childrendic['industry_name'] = childrenrow.industry_name
