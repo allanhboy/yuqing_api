@@ -110,7 +110,7 @@ class Follow(ApiHandler):
             #取消关注行业信息
             if follow_type == 2:
                 for row in dbsession.execute('select id from industry where FIND_IN_SET(id,getChildrenOrg({id}))'.format(id=id)).fetchall():
-                    dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == row[0])).one_or_none()
+                    dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == row[0]),follow_industry.is_follow==1).one_or_none()
                     if dbindustryinfo is not None:
                         dbindustryinfo.is_follow = 0
                         dbindustryinfo.unfollow_time = datenow
