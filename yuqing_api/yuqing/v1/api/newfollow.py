@@ -98,6 +98,6 @@ class Newfollow(ApiHandler):
             dbsession.commit()
             return None, 204, None
         except:
-            return None, 200, None
+            return None, 400 , None
         finally:
             dbsession.close()

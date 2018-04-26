@@ -83,7 +83,7 @@ class Follow(ApiHandler):
             dbsession.close()
             return None, 204, None
         except:
-            return None, 204, None
+            return None, 400, None
         finally:
             dbsession.close() 
 
@@ -121,6 +121,6 @@ class Follow(ApiHandler):
             dbsession.commit()
             return None, 204, None
         except:
-            return None, 204, None
+            return None, 400, None
         finally:
             dbsession.close() 

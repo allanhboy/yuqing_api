@@ -27,6 +27,6 @@ class ArticleIdInvalid(ApiHandler):
             else:
                 return {"message": "未找到该文章","code": 0},400,None
         except:
-            return None, 204, None
+            return None, 400, None
         finally:
             dbsession.close() 
