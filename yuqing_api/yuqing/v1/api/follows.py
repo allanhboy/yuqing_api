@@ -38,8 +38,13 @@ class Follows(ApiHandler):
             db = dbsession.query(industry).join(follow_industry,industry.id==follow_industry.industry_id).filter(and_(follow_industry.employee_id==user.employee.id),follow_industry.is_follow==1).order_by(follow_industry.follow_time.desc()).all()
             for row in db:
                 if row.parent_id is not None:
-                    parents=[(t1) for t1 in db if t1.parent_id ==row.id]
-                    if len(parents):
+                    parents=[(t1) for t1 in db if t1.id ==row.parent_id]
+                    print(row.id)
+                    print(row.parent_id)
+                    print(parents)
+                    print('--------------')
+                    print(parents)
+                    if len(parents)>0:
                         continue
                 industryinfodic = {}
                 industryinfodic['id']=row.id
