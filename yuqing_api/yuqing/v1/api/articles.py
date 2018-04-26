@@ -50,7 +50,6 @@ class Articles(ApiHandler):
                 articleinfodic['is_read'] = row[4]
                 articleinfodic['time'] = row[3].strftime('%Y/%m/%d %H:%M:%S')
                 articleinfoarray.append(articleinfodic) 
-            respone['articles'] = articleinfoarray
         else:
             dbindustryarticle=dbsession.query(article.id, article.title, industry.industry_name, article.publish_time, employee_article.is_read)\
                 .join(industry_article, article.id == industry_article.article_id)\
@@ -65,6 +64,7 @@ class Articles(ApiHandler):
             respone['count'] = dbindustryarticle.count()
 
             dbindustryarticle=dbindustryarticle.order_by(article.publish_time.desc()).slice((page_index - 1) * page_size, page_index * page_size)
+        
             for row in dbindustryarticle:
                 articleinfodic = {}
                 articleinfodic['id'] = row[0]
@@ -74,6 +74,6 @@ class Articles(ApiHandler):
                 articleinfodic['is_read'] = row[4]
                 articleinfodic['time'] = row[3].strftime('%Y/%m/%d %H:%M:%S')
                 articleinfoarray.append(articleinfodic)
-            respone['articles'] = articleinfoarray
+        respone['articles'] = articleinfoarray
         dbsession.close()
         return respone, 200, None

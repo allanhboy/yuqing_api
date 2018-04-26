@@ -17,4 +17,5 @@ class FollowState(ApiHandler):
         dbsession = _connectDBdata_()
         dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
         response = {'company':dbemployeefollow.company_count,'industry':dbemployeefollow.industry_count}
+        dbsession.close()
         return response, 200, None

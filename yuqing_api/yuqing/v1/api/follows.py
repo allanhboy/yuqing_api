@@ -39,11 +39,6 @@ class Follows(ApiHandler):
             for row in db:
                 if row.parent_id is not None:
                     parents=[(t1) for t1 in db if t1.id ==row.parent_id]
-                    print(row.id)
-                    print(row.parent_id)
-                    print(parents)
-                    print('--------------')
-                    print(parents)
                     if len(parents)>0:
                         continue
                 industryinfodic = {}

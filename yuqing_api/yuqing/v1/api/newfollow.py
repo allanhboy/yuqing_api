@@ -4,10 +4,11 @@ from __future__ import absolute_import, print_function
 from . import ApiHandler
 from .. import schemas
 
-
+import urllib.request
 from datetime import datetime, timedelta
+import json
 
-from core.PackageDB import company,employee_follow,follow_company,company_article,employee_article,_connectDBdata_
+from core.PackageDB import company,employee_follow,follow_company,company_article,employee_article,article,_connectDBdata_
 
 class Newfollow(ApiHandler):
 
@@ -22,6 +23,8 @@ class Newfollow(ApiHandler):
         short_name = self.json['short_name']
 
         dbsession =_connectDBdata_()
+
+
         dbcompanyinfo = dbsession.query(company).filter(company.company_name == company_name).one_or_none()
         #添加新的公司
         if dbcompanyinfo is None:
@@ -35,6 +38,22 @@ class Newfollow(ApiHandler):
             dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id ).one()
             dbemployeefollow.company_count = dbemployeefollow.company_count+1
             dbsession.add(dbemployeefollow)
+
+            #爬取文章
+            url = 'http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords={short_name}'.format(short_name=short_name)
+            req = urllib.request.Request(url)
+
+            #公司和文章关联
+            dbarticleinfo = dbsession.query(article.id).filter(article.text.like('%'+short_name+'%' )).all()
+            companyarticle = []
+            print(dbcompanyinfo.id)
+            print(dbarticleinfo)
+            for row in dbarticleinfo:
+                dbcompanyarticleinfo = company_article(company_id = dbcompanyinfo.id ,article_id = row[0])
+                companyarticle.append(dbcompanyarticleinfo)
+            dbsession.add_all(companyarticle)
+            dbsession.commit()
+
         else:
             dbfollowcompany = dbsession.query(follow_company).filter(follow_company.company_id == dbcompanyinfo.id,follow_company.employee_id == user.employee.id).one_or_none()
             if dbfollowcompany:
@@ -54,10 +73,12 @@ class Newfollow(ApiHandler):
                 dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id ).one()
                 dbemployeefollow.company_count = dbemployeefollow.company_count+1
                 dbsession.add(dbemployeefollow)
+        
+
         #操作员工关注文章
         faker_employee_article = []
         for row in dbsession.query(company_article.article_id).filter(company_article.company_id == dbcompanyinfo.id).all():
-            dbemployeearticleinfo = dbsession.query(employee_article).filter(employee_article.article_id == row[0]).one_or_none()
+            dbemployeearticleinfo = dbsession.query(employee_article).filter(employee_article.article_id == row[0],employee_article.employee_id == user.employee.id).one_or_none()
             if dbemployeearticleinfo is None:
                 dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 1,is_send=1,send_time = datetime.now())
                 faker_employee_article.append(dbemployeearticleinfo)
