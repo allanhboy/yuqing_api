@@ -41,10 +41,11 @@ class Follows(ApiHandler):
                     parents=[(t1) for t1 in db if t1.id ==row.parent_id]
                     if len(parents)>0:
                         continue
+                children=[(t1) for t1 in db if t1.parent_id ==row.id]
                 industryinfodic = {}
                 industryinfodic['id']=row.id
                 industryinfodic['industry_name'] = row.industry_name
-                industryinfodic['children_count'] = row.children_count
+                industryinfodic['children_count'] = len(children)
                 industryinfodic['children_industry'] = factorial(row.id,db)
                 industryinfoarray.append(industryinfodic)
             respone['industry'] = industryinfoarray
@@ -56,10 +57,11 @@ def factorial(parent_id,db):
     fatherindustry = []
     curectchilddb=[(t1) for t1 in db if t1.parent_id ==parent_id]
     for curectchilddbrow in curectchilddb:
+        children=[(t1) for t1 in db if t1.parent_id ==curectchilddbrow.id]
         childrendic = {}
         childrendic['id'] = curectchilddbrow.id
         childrendic['industry_name'] = curectchilddbrow.industry_name
-        childrendic['children_count'] = curectchilddbrow.children_count
+        childrendic['children_count'] = len(children)
         childrendic['children_industry']=factorial(curectchilddbrow.id,db)
         fatherindustry.append(childrendic)
     return fatherindustry
