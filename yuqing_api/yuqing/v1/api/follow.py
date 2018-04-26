@@ -58,12 +58,12 @@ class Follow(ApiHandler):
                 #对已取消进行关注操作
                 if dbindustryinfo:
                     if dbindustryinfo.is_follow == 1:
-                        return None, 204, None
+                        continue
                     dbindustryinfo.is_follow = 1
                     dbindustryinfo.follow_time = datetime.now()
                     dbsession.add(dbindustryinfo)
                 else:
-                #第一次关注    
+                #第一次关注 
                     dbindustryinfo = follow_industry(employee_id=user.employee.id,industry_id= row[0])
                     dbsession.add(dbindustryinfo)
                 dbemployeefollow = dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).one_or_none()
