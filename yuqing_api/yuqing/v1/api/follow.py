@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function
 from . import ApiHandler
 from .. import schemas
 
-from sqlalchemy import and_
+from sqlalchemy import and_,exists
 from datetime import datetime,timedelta
 from core.PackageDB import follow_company,follow_industry,employee_follow,company_article,industry_article,employee_article,article,_connectDBdata_
 
@@ -40,13 +40,14 @@ class Follow(ApiHandler):
 
                 #员工关注文章
                 faker_employee_article = []
-                for row in dbsession.query(company_article.article_id,article.publish_time).join(article,article.id == company_article.article_id).filter(company_article.company_id == dbcompanyinfo.company_id).all():
-                    dbemployeearticleinfo = dbsession.query(employee_article).filter(and_(employee_article.article_id == row[0],employee_article.employee_id == user.employee.id)).one_or_none()
-                    if dbemployeearticleinfo is None:
-                        dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datenow)
-                        if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
-                            dbemployeearticleinfo.is_read =1
-                        faker_employee_article.append(dbemployeearticleinfo)
+                for row in dbsession.query(company_article.article_id,article.publish_time)\
+                    .join(article,article.id == company_article.article_id)\
+                    .filter(company_article.company_id == dbcompanyinfo.company_id)\
+                .filter(~exists().where(employee_article.article_id == company_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
+                    dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datenow)
+                    if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
+                        dbemployeearticleinfo.is_read =1
+                    faker_employee_article.append(dbemployeearticleinfo)
                 dbsession.add_all(faker_employee_article)
             #关注行业信息
             if follow_type == 2:
@@ -68,15 +69,16 @@ class Follow(ApiHandler):
 
                     #员工关注文章
                     faker_employee_article = []
-                    for row in dbsession.query(industry_article.article_id,article.publish_time).join(article,article.id == industry_article.article_id).filter(industry_article.industry_id == dbindustryinfo.industry_id).all():
-                        dbemployeearticleinfo = dbsession.query(employee_article).filter(and_(employee_article.article_id == row[0],employee_article.employee_id == user.employee.id)).one_or_none()
-                        if dbemployeearticleinfo is None:
-                            dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datenow)
-                            if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
-                                dbemployeearticleinfo.is_read = 1
-
-                            faker_employee_article.append(dbemployeearticleinfo)
-                    dbsession.add_all(faker_employee_article)
+                faker_employee_article = []
+                for row in dbsession.query(industry_article.article_id,article.publish_time)\
+                    .join(article,article.id == industry_article.article_id)\
+                    .filter(industry_article.industry_id == dbindustryinfo.industry_id)\
+                .filter(~exists().where(employee_article.article_id == industry_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
+                    dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datenow)
+                    if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
+                        dbemployeearticleinfo.is_read = 1
+                    faker_employee_article.append(dbemployeearticleinfo)
+                dbsession.add_all(faker_employee_article)
             dbsession.commit()
             dbsession.close()
             return None, 204, None
