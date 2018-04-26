@@ -32,6 +32,7 @@ class Follow(ApiHandler):
                 dbcompanyinfo.follow_time = datenow
             #第一次关注 
             else: 
+               
                 dbcompanyinfo = follow_company(employee_id=user.employee.id,company_id= id)
                 dbsession.add(dbcompanyinfo)
             dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'company_count':employee_follow.company_count+1})
@@ -48,6 +49,7 @@ class Follow(ApiHandler):
             dbsession.add_all(faker_employee_article)
         #关注行业信息
         if follow_type == 2:
+            
             for row in dbsession.execute('select id from industry where FIND_IN_SET(id,getChildrenOrg({id}))'.format(id=id)).fetchall():
                 dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == row[0])).one_or_none()
                 #对已取消进行关注操作
@@ -92,17 +94,21 @@ class Follow(ApiHandler):
         dbsession = _connectDBdata_()
         #取消关注公司信息
         if follow_type == 1:
-            dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()      
-            dbcompanyinfo.is_follow = 0
-            dbcompanyinfo.unfollow_time = datenow
-            dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'company_count':employee_follow.company_count-1})
+            dbcompanyinfo = dbsession.query(follow_company).filter(and_(follow_company.employee_id == user.employee.id),follow_company.company_id == id).one_or_none()  
+            if dbcompanyinfo is not None:  
+                dbcompanyinfo.is_follow = 0
+                dbcompanyinfo.unfollow_time = datenow
+                dbsession.add(dbcompanyinfo)
+                dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'company_count':employee_follow.company_count-1})
         #取消关注行业信息
         if follow_type == 2:
             for row in dbsession.execute('select id from industry where FIND_IN_SET(id,getChildrenOrg({id}))'.format(id=id)).fetchall():
                 dbindustryinfo = dbsession.query(follow_industry).filter(and_(follow_industry.employee_id == user.employee.id,follow_industry.industry_id == row[0])).one_or_none()
-                dbindustryinfo.is_follow = 0
-                dbindustryinfo.unfollow_time = datenow
-                dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'industry_count':employee_follow.industry_count-1})
+                if dbindustryinfo is not None:
+                    dbindustryinfo.is_follow = 0
+                    dbindustryinfo.unfollow_time = datenow
+                    dbsession.add(dbindustryinfo)
+                    dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'industry_count':employee_follow.industry_count-1})
         dbsession.commit()
         dbsession.close()
         return None, 204, None
