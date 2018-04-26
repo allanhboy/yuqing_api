@@ -60,6 +60,8 @@ class Follow(ApiHandler):
                             dbindustryinfo.is_follow = 1
                             dbindustryinfo.follow_time = datenow
                             dbsession.add(dbindustryinfo)
+                        else:
+                            continue
                     else:
                     #第一次关注 
                         dbindustryinfo = follow_industry(employee_id=user.employee.id,industry_id= row[0])
@@ -67,8 +69,7 @@ class Follow(ApiHandler):
                     dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'industry_count':employee_follow.industry_count+1})
 
 
-                    #员工关注文章
-                    faker_employee_article = []
+                #员工关注文章
                 faker_employee_article = []
                 for row in dbsession.query(industry_article.article_id,article.publish_time)\
                     .join(article,article.id == industry_article.article_id)\
