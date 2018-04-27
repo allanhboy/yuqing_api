@@ -72,14 +72,15 @@ class Newfollow(ApiHandler):
                     dbemployeefollow.company_count = dbemployeefollow.company_count+1
                     dbsession.add(dbemployeefollow)
 
-            #爬取文章
+            # 爬取文章
             url='http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
             key_code=urllib.request.quote(short_name)  #因为URL里含中文，需要进行编码
             url_all=url+key_code
-            req = urllib.request.Request(url)
-            with urllib.request.urlopen(req) as response:
-                the_page = response.read()
-            print(the_page)
+            print(url_all)
+            req = urllib.request.Request(url_all)
+            # with urllib.request.urlopen(req) as response:
+            #     the_page = response.read()
+            # print(the_page)
 
 
             #公司和文章关联
@@ -91,7 +92,6 @@ class Newfollow(ApiHandler):
                 dbcompanyarticleinfo = company_article(
                     company_id=dbcompanyinfo.id, article_id=row[0])
                 companyarticle.append(dbcompanyarticleinfo)
-            print(len(companyarticle))
             dbsession.add_all(companyarticle)
             dbsession.flush()
 
@@ -105,9 +105,8 @@ class Newfollow(ApiHandler):
                 if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
                     dbemployeearticleinfo.is_read = 1
                 faker_employee_article.append(dbemployeearticleinfo)
-            print(len(faker_employee_article))
             dbsession.add_all(faker_employee_article)
-            dbsession.commit()
+            # dbsession.commit()
             return None, 204, None
         except:
             return None, 400 , None
