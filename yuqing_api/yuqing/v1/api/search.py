@@ -50,10 +50,11 @@ class Search(ApiHandler):
             dbindustryinfo = dbindustryinfo.all()
             dbsession.close()
             for row in [t1 for t1 in dbindustryinfo if key in t1.industry_name]:
+                children=[(t1) for t1 in dbindustryinfo if t1.parent_id ==row.id]
                 infodic = {}
                 infodic['id'] = row.id
                 infodic['industry_name'] = row.industry_name
-                infodic['children_count'] = row.children_count
+                infodic['children_count'] = len(children)
                 infodic['follow_type'] = 2
 
                 children = []
