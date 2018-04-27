@@ -69,17 +69,17 @@ class Follow(ApiHandler):
                     dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'industry_count':employee_follow.industry_count+1})
 
 
-                #员工关注文章
-                faker_employee_article = []
-                for row in dbsession.query(industry_article.article_id,article.publish_time)\
-                    .join(article,article.id == industry_article.article_id)\
-                    .filter(industry_article.industry_id == dbindustryinfo.industry_id)\
-                .filter(~exists().where(employee_article.article_id == industry_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
-                    dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datenow)
-                    if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
-                        dbemployeearticleinfo.is_read = 1
-                    faker_employee_article.append(dbemployeearticleinfo)
-                dbsession.add_all(faker_employee_article)
+                    #员工关注文章
+                    faker_employee_article = []
+                    for row in dbsession.query(industry_article.article_id,article.publish_time)\
+                        .join(article,article.id == industry_article.article_id)\
+                        .filter(industry_article.industry_id == dbindustryinfo.industry_id)\
+                    .filter(~exists().where(employee_article.article_id == industry_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
+                        dbemployeearticleinfo = employee_article(employee_id =user.employee.id,article_id = row[0],is_read = 0,is_invalid = 0,is_send=1,send_time = datenow)
+                        if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
+                            dbemployeearticleinfo.is_read = 1
+                        faker_employee_article.append(dbemployeearticleinfo)
+                    dbsession.add_all(faker_employee_article)
             dbsession.commit()
             dbsession.close()
             return None, 204, None
