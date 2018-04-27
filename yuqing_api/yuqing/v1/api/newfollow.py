@@ -5,7 +5,7 @@ from . import ApiHandler
 from .. import schemas
 
 from sqlalchemy import exists
-import urllib.request
+import urllib.request, urllib.parse
 from datetime import datetime, timedelta
 import json
 
@@ -27,7 +27,6 @@ class Newfollow(ApiHandler):
         short_name = self.json['short_name']
         if short_name is None:
             return None, 400, None
-
         dbsession = _connectDBdata_()
         try:
             dbcompanyinfo = dbsession.query(company).filter(
@@ -73,9 +72,14 @@ class Newfollow(ApiHandler):
                     dbsession.add(dbemployeefollow)
 
             # 爬取文章
-            url = 'http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords={short_name}'.format(
-                short_name=short_name)
-            urllib.request.Request(url)
+            try:
+                url='http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
+                key_code=urllib.request.quote(short_name)  #因为URL里含中文，需要进行编码
+                url_all=url+key_code
+                header={'User-Agent':'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}   #头部信息
+                urllib.request.Request(url_all,headers=header)
+            except print(0):
+                pass
 
             # 公司和文章关联
             dbarticleinfo = dbsession.query(article.id).filter(~exists().where(
