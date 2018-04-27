@@ -73,14 +73,14 @@ class Newfollow(ApiHandler):
                     dbsession.add(dbemployeefollow)
 
             #爬取文章
-            try:
-                url='http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
-                key_code=urllib.request.quote(short_name)  #因为URL里含中文，需要进行编码
-                url_all=url+key_code
-                header={'User-Agent':'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}   #头部信息
-                urllib.request.Request(url_all,headers=header)
-            except print(0):
-                pass
+            url='http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
+            key_code=urllib.request.quote(short_name)  #因为URL里含中文，需要进行编码
+            url_all=url+key_code
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req) as response:
+                the_page = response.read()
+            print(the_page)
+
 
             #公司和文章关联
             dbarticleinfo = dbsession.query(article.id).filter(~exists().where(
@@ -93,7 +93,7 @@ class Newfollow(ApiHandler):
             dbsession.add_all(companyarticle)
             dbsession.flush()
 
-            # 操作员工关注文章
+            #操作员工关注文章
             faker_employee_article = []
             for row in dbsession.query(company_article.article_id,article.publish_time)\
                 .join(article,article.id == company_article.article_id)\
