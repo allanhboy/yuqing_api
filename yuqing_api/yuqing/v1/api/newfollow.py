@@ -9,7 +9,7 @@ import urllib.request, urllib.parse
 from datetime import datetime, timedelta
 import json
 
-from core.PackageDB import company, employee_follow, follow_company, company_article, employee_article, article, _connectDBdata_
+from core.PackageDB import company, employee_follow, follow_company, company_article, employee_article, article,industry_article, _connectDBdata_
 
 
 class Newfollow(ApiHandler):
@@ -27,6 +27,7 @@ class Newfollow(ApiHandler):
         short_name = self.json['short_name']
         if short_name is None:
             return None, 400, None
+        datenow = datetime.now()
         dbsession = _connectDBdata_()
         try:
             dbcompanyinfo = dbsession.query(company).filter(
@@ -94,9 +95,13 @@ class Newfollow(ApiHandler):
 
             # 操作员工关注文章
             faker_employee_article = []
-            for row in dbsession.query(company_article.article_id).filter(company_article.company_id == dbcompanyinfo.id)\
+            for row in dbsession.query(company_article.article_id,article.publish_time)\
+                .join(article,article.id == industry_article.article_id)\
+                .filter(company_article.company_id == dbcompanyinfo.id)\
                 .filter(~exists().where(employee_article.article_id == company_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
                 dbemployeearticleinfo = employee_article(employee_id=user.employee.id, article_id=row[0], is_read=0, is_invalid=0, is_send=1, send_time=datetime.now())
+                if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
+                    dbemployeearticleinfo.is_read = 1
                 faker_employee_article.append(dbemployeearticleinfo)
             dbsession.add_all(faker_employee_article)
             dbsession.commit()
