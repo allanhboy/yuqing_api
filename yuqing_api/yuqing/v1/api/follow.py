@@ -109,7 +109,7 @@ class Follow(ApiHandler):
                     dbcompanyinfo.is_follow = 0
                     dbcompanyinfo.unfollow_time = datenow
                     dbsession.add(dbcompanyinfo)
-                    dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'company_count':employee_follow.company_count-1})
+                    dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id,employee_follow.industry_count-1>=0).update({'company_count':employee_follow.company_count-1})
             #取消关注行业信息
             if follow_type == 2:
                 for row in dbsession.execute('select id from industry where FIND_IN_SET(id,getChildrenOrg({id}))'.format(id=id)).fetchall():
@@ -118,7 +118,7 @@ class Follow(ApiHandler):
                         dbindustryinfo.is_follow = 0
                         dbindustryinfo.unfollow_time = datenow
                         dbsession.add(dbindustryinfo)
-                        dbsession.query(employee_follow).filter(employee_follow.id == user.employee.id).update({'industry_count':employee_follow.industry_count-1})
+                        dbsession.query(employee_follow).filter(and_(employee_follow.id == user.employee.id),employee_follow.industry_count-1>=0).update({'industry_count':employee_follow.industry_count-1})
             dbsession.commit()
             return None, 204, None
         except:
