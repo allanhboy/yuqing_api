@@ -27,7 +27,7 @@ class ArticleId(ApiHandler):
         reponse['source_url'] = dbarticleinfo.url
         reponse['content'] = dbarticleinfo.text
         reponse['time'] = dbarticleinfo.publish_time.strftime('%Y/%m/%d %H:%M:%S')
-        dbsession.query(employee_article).filter(and_(employee_article.article_id == id,employee_article.employee_id == user.employee.id)).update({'is_read':1})
+        dbsession.query(employee_article).filter(and_(employee_article.article_id == id,employee_article.employee_id == user.employee.id,employee_article.is_read == 0)).update({'is_read':1})
         dbsession.commit()
         dbsession.close()
         return reponse, 200, None
