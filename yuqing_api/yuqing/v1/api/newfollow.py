@@ -84,12 +84,14 @@ class Newfollow(ApiHandler):
 
             #公司和文章关联
             dbarticleinfo = dbsession.query(article.id).filter(~exists().where(
-                company_article.article_id == article.id)).filter(article.text.like('%'+short_name+'%')).all()
+                company_article.article_id == article.id).where(
+                company_article.company_id == dbcompanyinfo.id)).filter(article.text.like('%'+short_name+'%')).all()
             companyarticle = []
             for row in dbarticleinfo:
                 dbcompanyarticleinfo = company_article(
                     company_id=dbcompanyinfo.id, article_id=row[0])
                 companyarticle.append(dbcompanyarticleinfo)
+            print(len(companyarticle))
             dbsession.add_all(companyarticle)
             dbsession.flush()
 
@@ -103,6 +105,7 @@ class Newfollow(ApiHandler):
                 if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
                     dbemployeearticleinfo.is_read = 1
                 faker_employee_article.append(dbemployeearticleinfo)
+            print(len(faker_employee_article))
             dbsession.add_all(faker_employee_article)
             dbsession.commit()
             return None, 204, None
