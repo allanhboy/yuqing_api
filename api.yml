@@ -215,6 +215,8 @@ paths:
           description: 未登录
         '403':
           description: 未绑定
+        '404':
+          description: 未找到
         '500':
           description: 服务器异常
   '/article/{id}/invalid':
