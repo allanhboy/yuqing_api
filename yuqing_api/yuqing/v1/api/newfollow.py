@@ -5,11 +5,12 @@ from . import ApiHandler
 from .. import schemas
 
 from sqlalchemy import exists
-import urllib.request, urllib.parse
+import urllib.request
+import urllib.parse
 from datetime import datetime, timedelta
 import json
 
-from core.PackageDB import company, employee_follow, follow_company, company_article, employee_article, article,industry_article, _connectDBdata_
+from core.PackageDB import company, employee_follow, follow_company, company_article, employee_article, article, industry_article, _connectDBdata_
 
 
 class Newfollow(ApiHandler):
@@ -72,18 +73,7 @@ class Newfollow(ApiHandler):
                     dbemployeefollow.company_count = dbemployeefollow.company_count+1
                     dbsession.add(dbemployeefollow)
 
-            # 爬取文章
-            url='http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
-            key_code=urllib.request.quote(short_name)  #因为URL里含中文，需要进行编码
-            url_all=url+key_code
-            print(url_all)
-            req = urllib.request.Request(url_all)
-            # with urllib.request.urlopen(req) as response:
-            #     the_page = response.read()
-            # print(the_page)
-
-
-            #公司和文章关联
+            # 公司和文章关联
             dbarticleinfo = dbsession.query(article.id).filter(~exists().where(
                 company_article.article_id == article.id).where(
                 company_article.company_id == dbcompanyinfo.id)).filter(article.text.like('%'+short_name+'%')).all()
@@ -95,20 +85,35 @@ class Newfollow(ApiHandler):
             dbsession.add_all(companyarticle)
             dbsession.flush()
 
-            #操作员工关注文章
+            # 操作员工关注文章
             faker_employee_article = []
-            for row in dbsession.query(company_article.article_id,article.publish_time)\
-                .join(article,article.id == company_article.article_id)\
+            for row in dbsession.query(company_article.article_id, article.publish_time)\
+                .join(article, article.id == company_article.article_id)\
                 .filter(company_article.company_id == dbcompanyinfo.id)\
-                .filter(~exists().where(employee_article.article_id == company_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
-                dbemployeearticleinfo = employee_article(employee_id=user.employee.id, article_id=row[0], is_read=0, is_invalid=0, is_send=1, send_time=datetime.now())
+                    .filter(~exists().where(employee_article.article_id == company_article.article_id).where(employee_article.employee_id == user.employee.id)).all():
+                dbemployeearticleinfo = employee_article(
+                    employee_id=user.employee.id, article_id=row[0], is_read=0, is_invalid=0, is_send=1, send_time=datetime.now())
                 if row[1].strftime('%Y/%m/%d') < datenow.strftime('%Y/%m/%d'):
                     dbemployeearticleinfo.is_read = 1
                 faker_employee_article.append(dbemployeearticleinfo)
             dbsession.add_all(faker_employee_article)
             # dbsession.commit()
+            dbsession.close()
+            # 爬取文
+            try:
+                url = 'http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
+                key_code = urllib.request.quote(short_name)  # 因为URL里含中文，需要进行编码
+                url_all = url+key_code
+                print(url_all)
+                req = urllib.request.Request(url_all)
+                response = urllib.request.urlopen(req)
+                the_page = response.read()
+                print(the_page)
+            except:
+                pass
             return None, 204, None
         except:
-            return None, 400 , None
-        finally:
             dbsession.close()
+            return None, 400, None
+        finally:
+            pass
