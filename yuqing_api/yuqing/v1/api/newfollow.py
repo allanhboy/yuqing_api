@@ -97,7 +97,7 @@ class Newfollow(ApiHandler):
                     dbemployeearticleinfo.is_read = 1
                 faker_employee_article.append(dbemployeearticleinfo)
             dbsession.add_all(faker_employee_article)
-            # dbsession.commit()
+            dbsession.commit()
             dbsession.close()
             # 爬取文
             try:
