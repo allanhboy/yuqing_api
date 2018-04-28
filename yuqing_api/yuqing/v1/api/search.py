@@ -60,7 +60,7 @@ class Search(ApiHandler):
                 infodic['follow_type'] = 2
 
                 _children = []
-                for childrenrow in children:
+                for childrenrow in [(t1) for t1 in dbindustryinfo if t1.parent_id ==row.id]:
                     childrendic = {}
                     childrendic['id'] = childrenrow.id
                     childrendic['industry_name'] = childrenrow.industry_name
