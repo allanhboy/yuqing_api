@@ -44,11 +44,8 @@ class Newfollow(ApiHandler):
                     employee_id=user.employee.id, company_id=dbcompanyinfo.id)
                 dbsession.add(dbfollowcompany)
 
-                dbemployeefollow = dbsession.query(employee_follow).filter(
-                    employee_follow.id == user.employee.id).one()
-                dbemployeefollow.company_count = dbemployeefollow.company_count+1
-                dbsession.add(dbemployeefollow)
-
+                dbsession.query(employee_follow).filter(
+                    employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
             else:
                 dbfollowcompany = dbsession.query(follow_company).filter(
                     follow_company.company_id == dbcompanyinfo.id, follow_company.employee_id == user.employee.id).one_or_none()
@@ -57,21 +54,15 @@ class Newfollow(ApiHandler):
                     if dbfollowcompany.is_follow == 0:
                         dbfollowcompany.is_follow = 1
                         dbfollowcompany.follow_time = datetime.now()
-                        dbsession.add(dbcompanyinfo)
-
-                        dbemployeefollow = dbsession.query(employee_follow).filter(
-                            employee_follow.id == user.employee.id).one()
-                        dbemployeefollow.company_count = dbemployeefollow.company_count+1
-                        dbsession.add(dbemployeefollow)
+                        dbsession.query(employee_follow).filter(
+                            employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
                 else:
                     # 公司已经存在，无关注数据
                     dbfollowcompany = follow_company(
                         employee_id=user.employee.id, company_id=dbcompanyinfo.id)
                     dbsession.add(dbfollowcompany)
-                    dbemployeefollow = dbsession.query(employee_follow).filter(
-                        employee_follow.id == user.employee.id).one()
-                    dbemployeefollow.company_count = dbemployeefollow.company_count+1
-                    dbsession.add(dbemployeefollow)
+                    dbsession.query(employee_follow).filter(
+                        employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
 
             # 公司和文章关联
             dbarticleinfo = dbsession.query(article.id).filter(~exists().where(
@@ -104,13 +95,11 @@ class Newfollow(ApiHandler):
                 url = 'http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
                 key_code = urllib.request.quote(short_name)  # 因为URL里含中文，需要进行编码
                 url_all = url+key_code
-                print(url_all)
                 req = urllib.request.Request(url_all)
                 response = urllib.request.urlopen(req)
                 the_page = response.read()
-                print(the_page)
             except:
-                pass
+                print('爬取失败')
             return None, 204, None
         except:
             dbsession.close()
