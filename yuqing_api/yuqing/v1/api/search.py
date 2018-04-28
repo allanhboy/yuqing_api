@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
+from sqlalchemy import and_
+
+from core.PackageDB import (_connectDBdata_, company, follow_company,
+                            follow_industry, industry)
+
 from . import ApiHandler
 from .. import schemas
-
-from core.PackageDB import company, industry, follow_company, follow_industry, _connectDBdata_
-from sqlalchemy import and_
 
 
 class Search(ApiHandler):
@@ -17,6 +19,8 @@ class Search(ApiHandler):
         if user.session.employee_id is None:
             return None, 403, None
         key = self.args['key']
+        if key is None or len(key) <= 0:
+            return None, 404, None
         follow_type = self.args['follow_type']
         searchtype = 0
         if 'type' in self.args:
@@ -39,8 +43,6 @@ class Search(ApiHandler):
                 infodic['short_name'] = row[2]
                 infodic['follow_type'] = 1
                 infoarray.append(infodic)
-            respone = {'follows': infoarray}
-            return respone, 200, None
         else:
             # 行业信息
             dbindustryinfo = dbsession.query(industry)#.filter(industry.industry_name.like('%'+key+'%'))
@@ -57,13 +59,13 @@ class Search(ApiHandler):
                 infodic['children_count'] = len(children)
                 infodic['follow_type'] = 2
 
-                children = []
-                for childrenrow in [t1 for t1 in dbindustryinfo if t1.parent_id == row.id]:
+                _children = []
+                for childrenrow in children:
                     childrendic = {}
                     childrendic['id'] = childrenrow.id
                     childrendic['industry_name'] = childrenrow.industry_name
                     children.append(childrendic)
-                infodic['children'] = children
+                infodic['children'] = _children
                 infoarray.append(infodic)
-            respone = {'follows': infoarray}
-            return respone, 200, None
+        respone = {'follows': infoarray}
+        return respone, 200, None

@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
+from datetime import datetime, timedelta
+
+from sqlalchemy import and_
+
+from core.PackageDB import (_connectDBdata_, article, company, company_article,
+                            employee_article, follow_company, follow_industry,
+                            industry, industry_article)
+
 from . import ApiHandler
 from .. import schemas
 
-from sqlalchemy import and_
-from datetime import datetime, timedelta
-from core.PackageDB import industry_article, employee_article, company_article, article, follow_company, company, industry_article, follow_industry, industry, _connectDBdata_
-
 
 class Articles(ApiHandler):
-
     def get(self):
         user = self.get_current_user()
         if not user.valid:
@@ -21,16 +24,17 @@ class Articles(ApiHandler):
         follow_type = self.args['follow_type']
         key = ''
         if 'key' in self.args:
-            key = self.args['key'].strip()
+            key = self.args['key'].strip()  #TODO 特殊字符过滤
 
         page_size = 20
         skip = (page_index - 1) * page_size
         take = page_index * page_size
-        dbsession = _connectDBdata_()
-        
-        # 文章信息获取
+       
         respone = {}
         articles = []
+
+        # 文章信息获取
+        dbsession = _connectDBdata_()
         if follow_type == 1:
             articles = dbsession.query(article.id, article.title, company.company_name, article.publish_time, employee_article.is_read)\
                 .join(company_article, article.id == company_article.article_id)\
@@ -43,8 +47,8 @@ class Articles(ApiHandler):
 
             # 计算数量
             respone['count'] = articles.count()
-            articles = articles.order_by(
-                article.publish_time.desc()).slice(skip, take)
+            articles = articles.order_by(article.publish_time.desc(),article.id.desc()).slice(
+                skip, take)
         else:
             articles = dbsession.query(article.id, article.title, industry.industry_name, article.publish_time, employee_article.is_read)\
                 .join(industry_article, article.id == industry_article.article_id)\
@@ -57,8 +61,8 @@ class Articles(ApiHandler):
 
             # 计算数量
             respone['count'] = articles.count()
-            articles = articles.order_by(
-                article.publish_time.desc()).slice(skip, take)
+            articles = articles.order_by(article.publish_time.desc(),article.id.desc()).slice(
+                skip, take)
         dbsession.close()
 
         articleinfoarray = []

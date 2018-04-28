@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
-from . import ApiHandler
-from .. import schemas
+import json
+import urllib.parse
+import urllib.request
+from datetime import datetime, timedelta
 
 from sqlalchemy import exists
-import urllib.request
-import urllib.parse
-from datetime import datetime, timedelta
-import json
 
-from core.PackageDB import company, employee_follow, follow_company, company_article, employee_article, article, industry_article, _connectDBdata_
+from core.PackageDB import (_connectDBdata_, article, company, company_article,
+                            employee_article, employee_follow, follow_company,
+                            industry_article)
+
+from . import ApiHandler
+from .. import schemas
 
 
 class Newfollow(ApiHandler):
@@ -23,10 +26,10 @@ class Newfollow(ApiHandler):
             return None, 403, None
 
         company_name = self.json['company_name']
-        if company_name is None:
+        if company_name is None or len(company_name) <= 0:
             return None, 400, None
         short_name = self.json['short_name']
-        if short_name is None:
+        if short_name is None or len(short_name) <= 0:
             return None, 400, None
         datenow = datetime.now()
         dbsession = _connectDBdata_()
@@ -43,9 +46,6 @@ class Newfollow(ApiHandler):
                 dbfollowcompany = follow_company(
                     employee_id=user.employee.id, company_id=dbcompanyinfo.id)
                 dbsession.add(dbfollowcompany)
-
-                dbsession.query(employee_follow).filter(
-                    employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
             else:
                 dbfollowcompany = dbsession.query(follow_company).filter(
                     follow_company.company_id == dbcompanyinfo.id, follow_company.employee_id == user.employee.id).one_or_none()
@@ -54,15 +54,16 @@ class Newfollow(ApiHandler):
                     if dbfollowcompany.is_follow == 0:
                         dbfollowcompany.is_follow = 1
                         dbfollowcompany.follow_time = datetime.now()
-                        dbsession.query(employee_follow).filter(
-                            employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
+                    #公司存在，并且已经关注
+                    else:
+                        return None, 204, None
                 else:
                     # 公司已经存在，无关注数据
                     dbfollowcompany = follow_company(
                         employee_id=user.employee.id, company_id=dbcompanyinfo.id)
                     dbsession.add(dbfollowcompany)
-                    dbsession.query(employee_follow).filter(
-                        employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
+            dbsession.query(employee_follow).filter(
+                employee_follow.id == user.employee.id).update({'company_count': employee_follow.company_count+1})
 
             # 公司和文章关联
             dbarticleinfo = dbsession.query(article.id).filter(~exists().where(

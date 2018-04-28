@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
+import json
+import urllib.request
+import uuid
+from datetime import datetime, timedelta
+
+from core.PackageDB import _connectDBdata_, employee, session
+
 from . import ApiHandler
 from .. import schemas
 
-from core.PackageDB import session, employee, _connectDBdata_
-import urllib.request
-import json
-import uuid
-from datetime import datetime, timedelta
 
 class WechatLogin(ApiHandler):
 
@@ -42,7 +44,7 @@ class WechatLogin(ApiHandler):
         respone['expire_time'] = sessioninfo.expire_time.strftime(
             '%Y/%m/%d %H:%M:%S')
 
-        # #判断employee是否绑定openid,绑定给session的employee赋值
+        #判断employee是否绑定openid,绑定给session的employee赋值
         dbsession = _connectDBdata_()
         dbemployeeid = dbsession.query(employee.id).filter_by(openid=openid).one_or_none()
         if dbemployeeid:

@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
-from . import ApiHandler
-from .. import schemas
+import json
 
 from sqlalchemy import and_
-from core.PackageDB import follow_company, follow_industry, company, employee_follow, industry, _connectDBdata_
-import json
+
+from core.PackageDB import (_connectDBdata_, company, employee_follow,
+                            follow_company, follow_industry, industry)
+
+from . import ApiHandler
+from .. import schemas
 
 
 class Follows(ApiHandler):
@@ -24,10 +27,10 @@ class Follows(ApiHandler):
         respone = {}
         # 公司关注信息
         if dbfollow.company_count > 0:
-            companyinfoarray = []
             db = dbsession.query(company.id, company.company_name, company.short_name).join(follow_company, company.id == follow_company.company_id).filter(
                 and_(follow_company.employee_id == user.employee.id), follow_company.is_follow == 1).order_by(follow_company.follow_time.desc()).all()
             dbsession.close()
+            companyinfoarray = []
             for row in db:
                 companyinfodic = {}
                 companyinfodic['id'] = row[0]
@@ -40,10 +43,10 @@ class Follows(ApiHandler):
             respone['company'] = []
         # 行业关注信息
         if dbfollow.industry_count > 0:
-            industryinfoarray = []
             db = dbsession.query(industry).join(follow_industry, industry.id == follow_industry.industry_id).filter(and_(
                 follow_industry.employee_id == user.employee.id), follow_industry.is_follow == 1).order_by(follow_industry.follow_time.desc()).all()
             dbsession.close()
+            industryinfoarray = []
             for row in db:
                 if row.parent_id is not None:
                     parents = [(t1) for t1 in db if t1.id == row.parent_id]

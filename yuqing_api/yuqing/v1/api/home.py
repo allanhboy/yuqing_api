@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
-from . import ApiHandler
-from .. import schemas
+import json
 
 from sqlalchemy import and_
-from core.PackageDB import employee, article, company, employee_article, company_article, follow_company, industry_article, follow_industry, _connectDBdata_
+
+from core.PackageDB import (_connectDBdata_, article, company, company_article,
+                            employee, employee_article, follow_company,
+                            follow_industry, industry_article)
 from core.webconfig import alicdnserver
-import json
+
+from . import ApiHandler
+from .. import schemas
 
 
 class Home(ApiHandler):
@@ -53,7 +57,7 @@ class Home(ApiHandler):
             .join(company, company.id == company_article.company_id)\
             .join(employee_article, employee_article.article_id == article.id)\
             .filter(and_(follow_company.is_follow == 1, employee_article.is_invalid == 0, follow_company.employee_id == user.employee.id, employee_article.employee_id == user.employee.id))\
-            .order_by(article.publish_time.desc()).limit(20)
+            .order_by(article.publish_time.desc(),article.id.desc()).limit(20)
         dbsession.close()
         for row in db:
             var_article = {}
