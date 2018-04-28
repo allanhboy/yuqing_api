@@ -64,7 +64,7 @@ class Search(ApiHandler):
                     childrendic = {}
                     childrendic['id'] = childrenrow.id
                     childrendic['industry_name'] = childrenrow.industry_name
-                    children.append(childrendic)
+                    _children.append(childrendic)
                 infodic['children'] = _children
                 infoarray.append(infodic)
         respone = {'follows': infoarray}
