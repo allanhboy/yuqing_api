@@ -5,6 +5,7 @@ from sqlalchemy import Column, String, Integer, BigInteger, DATETIME, SmallInteg
 
 from sqlalchemy.orm import sessionmaker, relationship  # 与mysql建立会话
 from sqlalchemy import ForeignKey  # 表建立关系
+from core.webconfig import connect_str
 
 import os
 
@@ -151,9 +152,6 @@ class employee_article(Base):
 
 def _connectDBdata_():
     # 数据库连接
-    env_dist = os.environ
-    connect_str = env_dist.get(
-        'MYSQL_CONNECTIONSTRING', 'mysql+pymysql://root:djejeUJ3qj^su22@101.37.179.99:3306/yuqing?charset=utf8')
     engine = create_engine(connect_str)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

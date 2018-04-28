@@ -7,18 +7,16 @@ import uuid
 from datetime import datetime, timedelta
 
 from core.PackageDB import _connectDBdata_, employee, session
+from core.webconfig import appid,appscred
 
 from . import ApiHandler
 from .. import schemas
-
 
 class WechatLogin(ApiHandler):
 
     def post(self):
         code = self.json['code']
         random = self.json['random']
-        appid = 'wx79edc80703771261'
-        appscred = '200b4a453f52b431c3863c03e53304fc'
         # 获取微信opneid等信息
         url = 'https://api.weixin.qq.com/sns/jscode2session?appid={APPID}&secret={SECRET}&js_code={JSCODE}&grant_type=authorization_code'.format(
             APPID=appid, SECRET=appscred, JSCODE=code)
@@ -55,4 +53,4 @@ class WechatLogin(ApiHandler):
         dbsession.add(sessioninfo)
         dbsession.commit()
         dbsession.close()
-        return respone, 200, None
+        return None, 200, None

@@ -11,10 +11,10 @@ from sqlalchemy import exists
 from core.PackageDB import (_connectDBdata_, article, company, company_article,
                             employee_article, employee_follow, follow_company,
                             industry_article)
+from core.webconfig import spiderurl
 
 from . import ApiHandler
 from .. import schemas
-
 
 class Newfollow(ApiHandler):
 
@@ -93,9 +93,8 @@ class Newfollow(ApiHandler):
             dbsession.close()
             # 爬取文
             try:
-                url = 'http://yuqing-spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/baidunews?keywords='
                 key_code = urllib.request.quote(short_name)  # 因为URL里含中文，需要进行编码
-                url_all = url+key_code
+                url_all = spiderurl+key_code
                 req = urllib.request.Request(url_all)
                 response = urllib.request.urlopen(req)
                 the_page = response.read()
