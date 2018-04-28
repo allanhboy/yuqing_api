@@ -93,7 +93,7 @@ class Newfollow(ApiHandler):
             dbsession.close()
             # 爬取文
             try:
-                url = 'http://spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/?keywords='
+                url = 'http://yuqing-spider.cd641dc781add4bc6b8ed119cee669cb7.cn-hangzhou.alicontainer.com/baidunews?keywords='
                 key_code = urllib.request.quote(short_name)  # 因为URL里含中文，需要进行编码
                 url_all = url+key_code
                 req = urllib.request.Request(url_all)

@@ -32,7 +32,7 @@ class WechatLogin(ApiHandler):
 
         session_key = weixininfo['session_key']
         openid = weixininfo['openid']
-        unionid = weixininfo['unionid']
+        unionid = weixininfo.get('unionid', None)
 
         # #微信信息插入session表
         respone = {}
