@@ -13,7 +13,6 @@ from . import ApiHandler
 from .. import schemas
 
 class WechatLogin(ApiHandler):
-
     def post(self):
         code = self.json['code']
         random = self.json['random']
@@ -53,4 +52,4 @@ class WechatLogin(ApiHandler):
         dbsession.add(sessioninfo)
         dbsession.commit()
         dbsession.close()
-        return None, 200, None
+        return respone, 200, None
