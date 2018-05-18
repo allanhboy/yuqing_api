@@ -102,7 +102,6 @@ class Newfollow(ApiHandler):
                 print('爬取失败')
             return None, 204, None
         except:
-            dbsession.close()
             return None, 400, None
         finally:
-            pass
+            dbsession.close()
