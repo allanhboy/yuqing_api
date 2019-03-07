@@ -13,9 +13,7 @@ from core.webconfig import alicdnserver
 from . import ApiHandler
 from .. import schemas
 
-
 class Home(ApiHandler):
-
     def get(self):
         user = self.get_current_user()
         if not user.valid:
